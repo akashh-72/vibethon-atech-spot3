@@ -12,6 +12,18 @@ import Playground from "./pages/Playground";
 import Games from "./pages/Games";
 import Simulations from "./pages/Simulations";
 import Leaderboard from "./pages/Leaderboard";
+import About from "./pages/About";
+import Careers from "./pages/Careers";
+import Contact from "./pages/Contact";
+import Community from "./pages/Community";
+import Blog from "./pages/Blog";
+import Docs from "./pages/Docs";
+import PublicLayout from "./components/layout/PublicLayout";
+
+
+
+import Chatbot from "./components/common/Chatbot";
+
 import "./styles/global.css";
 import "./App.css";
 
@@ -41,7 +53,8 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Home />} />
+      {/* Static Pages wrapped in PublicLayout */}
+      <Route path="/" element={user ? <Navigate to="/dashboard" /> : <PublicLayout><Home /></PublicLayout>} />
       <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
       <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register />} />
 
@@ -91,6 +104,14 @@ function AppRoutes() {
         </ProtectedRoute>
       } />
 
+      <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
+      <Route path="/careers" element={<PublicLayout><Careers /></PublicLayout>} />
+      <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
+      <Route path="/community" element={<PublicLayout><Community /></PublicLayout>} />
+      <Route path="/blog" element={<PublicLayout><Blog /></PublicLayout>} />
+      <Route path="/docs" element={<PublicLayout><Docs /></PublicLayout>} />
+
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
@@ -101,6 +122,7 @@ function App() {
     <AuthProvider>
       <Router>
         <AppRoutes />
+        <Chatbot />
       </Router>
     </AuthProvider>
   );

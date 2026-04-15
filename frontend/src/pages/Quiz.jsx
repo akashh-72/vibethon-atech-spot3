@@ -178,68 +178,73 @@ export default function Quiz() {
 
   return (
     <div className="page-wrapper animate-fade-in">
-      {/* Header */}
       <div className="quiz-header">
-        <button className="btn btn-ghost btn-sm" onClick={() => setSelectedModule(null)}>
-          <ChevronLeft size={15} /> Quizzes
-        </button>
         <div className="quiz-progress-info">
-          <span className="quiz-q-count">{qIdx + 1} / {quiz.length}</span>
+          <span className="quiz-q-count">Question {qIdx + 1} / {quiz.length}</span>
           <div className="quiz-progress-track">
-            <div className="quiz-progress-fill" style={{ width: `${((qIdx) / quiz.length) * 100}%` }} />
+            <div className="quiz-progress-fill" style={{ width: `${((qIdx + 1) / quiz.length) * 100}%` }} />
           </div>
         </div>
+        <button className="btn-agora-secondary btn-sm" onClick={() => setSelectedModule(null)}>
+          Exit Quiz
+        </button>
       </div>
 
-      <div className="quiz-card card">
-        {/* Question */}
-        <div className="quiz-q-header">
-          <span className="quiz-q-label">Question {qIdx + 1}</span>
-          <h2 className="quiz-question">{question.question}</h2>
-        </div>
+      <motion.div 
+        key={qIdx}
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="stat-card quiz-card"
+        style={{ padding: '32px 40px' }}
+      >
+        <span className="quiz-q-label">Current Question</span>
+        <h2 className="quiz-question">{question.question}</h2>
 
-        {/* Options */}
         <div className="quiz-options">
           {question.options.map((opt, i) => {
-            let cls = "quiz-option";
-            if (answered) {
-              if (opt === question.answer) cls += " correct";
-              else if (opt === selected && opt !== question.answer) cls += " wrong";
-              else cls += " dimmed";
-            }
+            const marker = ["A", "B", "C", "D"][i];
             return (
-              <button key={i} className={cls} onClick={() => handleAnswer(opt)} disabled={answered}>
-                <div className="quiz-opt-marker">
-                  {answered && opt === question.answer ? <CheckCircle size={16} /> :
-                   answered && opt === selected ? <XCircle size={16} /> :
-                   <span>{String.fromCharCode(65 + i)}</span>}
-                </div>
+              <button
+                key={i}
+                className={`quiz-option ${answered ? (i === question.answer ? "correct" : selected === i ? "wrong" : "dimmed") : ""}`}
+                onClick={() => handleAnswer(i)}
+                disabled={answered}
+              >
+                <div className="quiz-opt-marker">{marker}</div>
                 <span className="quiz-opt-text">{opt}</span>
               </button>
             );
           })}
         </div>
 
-        {/* Explanation */}
-        {answered && question.explanation && (
-          <div className={`quiz-explanation ${isCorrect ? "correct" : "wrong"}`}>
+        {answered && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`quiz-explanation ${selected === question.answer ? "correct" : "wrong"}`}
+          >
             <div className="quiz-exp-label">
-              {isCorrect ? <CheckCircle size={14} /> : <XCircle size={14} />}
-              <span>{isCorrect ? "Correct!" : "Not quite"}</span>
+              {selected === question.answer ? (
+                <><CheckCircle size={15} /> Correct Answer</>
+              ) : (
+                <><XCircle size={15} /> Not quite right</>
+              )}
             </div>
             <p>{question.explanation}</p>
-          </div>
+          </motion.div>
         )}
 
-        {/* Nav */}
-        {answered && (
-          <div className="quiz-nav">
-            <button className="btn btn-primary" onClick={handleNext}>
-              {qIdx < quiz.length - 1 ? <><span>Next Question</span><ChevronRight size={15} /></> : <><span>See Results</span><Trophy size={15} /></>}
+        <div className="quiz-nav">
+          {answered && (
+            <button className="btn-agora-primary" onClick={handleNext}>
+              {qIdx === quiz.length - 1 ? "View Results" : "Next Question"}
+              <div className="btn-icon-circle black-circle">
+                <ChevronRight size={14} />
+              </div>
             </button>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </motion.div>
     </div>
   );
 }

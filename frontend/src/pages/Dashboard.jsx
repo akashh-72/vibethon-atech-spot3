@@ -68,13 +68,16 @@ export default function Dashboard() {
           </h1>
           <p className="page-subtitle">Here's your learning progress at a glance.</p>
         </div>
-        <Link to="/modules" className="btn btn-primary btn-sm">
-          Continue Learning <ChevronRight size={15} />
+        <Link to="/modules" className="btn-ln-primary">
+          <div className="btn-icon-circle black-circle">
+            <ChevronRight size={14} />
+          </div>
+          Continue Learning
         </Link>
       </div>
 
       {/* XP Level bar */}
-      <div className="db-level-bar card card-sm">
+      <div className="db-level-bar">
         <div className="db-level-row">
           <div className="db-level-info">
             <span className="db-level-badge">Level {level}</span>
@@ -82,13 +85,13 @@ export default function Dashboard() {
           </div>
           {myRank > 0 && (
             <span className="db-rank-badge">
-              <Trophy size={12} />
+              <Trophy size={14} style={{ opacity: 0.8 }} />
               Rank #{myRank}
             </span>
           )}
         </div>
-        <div className="progress-bar progress-bar-lg" style={{ marginTop: 10 }}>
-          <div className="progress-bar-fill" style={{ width: `${Math.min((xpInLevel / 200) * 100, 100)}%` }} />
+        <div className="progress-bar progress-bar-lg" style={{ marginTop: 14 }}>
+          <div className="progress-bar-fill" style={{ width: `${Math.min((xpInLevel / 200) * 100, 100)}%`, boxShadow: '0 0 10px rgba(0, 212, 255, 0.3)' }} />
         </div>
       </div>
 
@@ -97,12 +100,12 @@ export default function Dashboard() {
         {stats.map((s, i) => {
           const Icon = s.icon;
           return (
-            <div key={s.label} className={`stat-card animate-fade-in delay-${i + 1}`}>
-              <div className="stat-icon-wrap" style={{ background: s.bg }}>
+            <div key={s.label} className={`stat-card animate-fade-in`} style={{ animationDelay: `${i * 0.05}s` }}>
+              <div className="stat-icon-wrap" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
                 <Icon size={18} color={s.color} strokeWidth={2} />
               </div>
               <div className="stat-card-label">{s.label}</div>
-              <div className="stat-card-value" style={{ color: s.color }}>{s.value}</div>
+              <div className="stat-card-value">{s.value}</div>
             </div>
           );
         })}
@@ -110,7 +113,7 @@ export default function Dashboard() {
 
       <div className="db-grid-2">
         {/* Module progress */}
-        <div className="card">
+        <div className="stat-card">
           <div className="db-section-header">
             <h3>Module Progress</h3>
             <Link to="/modules" className="db-view-all">View all <ArrowUpRight size={13} /></Link>
@@ -130,7 +133,7 @@ export default function Dashboard() {
                           {m.level}
                         </span>
                         {score !== undefined && (
-                          <span className="db-score">{score}% quiz</span>
+                          <span className="db-score">{score}% score</span>
                         )}
                       </div>
                     </div>
@@ -150,7 +153,7 @@ export default function Dashboard() {
         {/* Leaderboard + Badges */}
         <div className="db-right-col">
           {/* Leaderboard preview */}
-          <div className="card">
+          <div className="stat-card">
             <div className="db-section-header">
               <h3>Top Learners</h3>
               <Link to="/leaderboard" className="db-view-all">Full board <ArrowUpRight size={13} /></Link>
@@ -189,7 +192,7 @@ export default function Dashboard() {
           </div>
 
           {/* Badges */}
-          <div className="card">
+          <div className="stat-card">
             <div className="db-section-header">
               <h3>Badges</h3>
               <span className="db-badge-count">{earnedBadges.length}/{BADGES.length} earned</span>

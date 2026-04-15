@@ -1,106 +1,126 @@
 .modules-progress-pill {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  color: var(--accent-emerald);
-  font-size: 0.8125rem;
+  gap: 8px;
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  color: var(--accent-cyan);
+  font-size: 13px;
   font-weight: 600;
-  padding: 7px 14px;
+  padding: 8px 16px;
   border-radius: var(--radius-full);
 }
 
 .modules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
 }
 
 .mod-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid var(--border);
+  border-top: 1px solid rgba(255, 255, 255, 0.12); /* Detail: top rim light */
+  border-radius: 20px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  text-decoration: none;
+  gap: 20px;
   transition: all var(--transition-base);
-  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
 }
 
-.mod-card:hover {
-  border-color: rgba(99, 102, 241, 0.3);
-  background: var(--bg-card-hover);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
+.mod-card:hover { 
+  transform: translateY(-6px); 
+  border-color: rgba(0, 229, 255, 0.3);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 229, 255, 0.05);
+}
+
+.mod-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 2px;
+  background: var(--gradient-brand);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.mod-card:hover::before {
+  opacity: 0.2;
 }
 
 .mod-card-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .mod-icon-wrap {
-  width: 48px; height: 48px;
-  border-radius: var(--radius-md);
+  width: 52px; height: 52px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.mod-icon-beginner     { background: rgba(16,185,129,0.12); color: var(--accent-emerald); border: 1px solid rgba(16,185,129,0.2); }
-.mod-icon-intermediate { background: rgba(245,158,11,0.12); color: var(--accent-amber);   border: 1px solid rgba(245,158,11,0.2); }
-.mod-icon-advanced     { background: rgba(244,63,94,0.12);  color: var(--accent-rose);    border: 1px solid rgba(244,63,94,0.2);  }
+.mod-icon-beginner     { color: var(--accent-emerald); }
+.mod-icon-intermediate { color: var(--accent-amber);   }
+.mod-icon-advanced     { color: var(--accent-rose);    }
 
 .mod-done-badge {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  color: var(--accent-emerald);
-  background: rgba(16,185,129,0.1);
-  border: 1px solid rgba(16,185,129,0.2);
-  padding: 4px 10px;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--accent-cyan);
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  padding: 5px 12px;
   border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .mod-card-body {
   flex: 1;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .mod-level-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .mod-xp {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.75rem;
+  font-size: 12px;
   font-weight: 700;
   color: var(--accent-amber);
   font-family: var(--font-mono);
 }
 
 .mod-title {
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-  letter-spacing: -0.015em;
+  color: #ffffff;
+  margin-bottom: 10px;
+  letter-spacing: -0.02em;
 }
 
 .mod-desc {
-  font-size: 0.8125rem;
-  color: var(--text-muted);
+  font-size: 14px;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
@@ -108,20 +128,20 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 16px;
+  padding-top: 20px;
   border-top: 1px solid var(--border);
 }
 
 .mod-lessons-count {
-  font-size: 0.75rem;
+  font-size: 13px;
   color: var(--text-muted);
   font-weight: 500;
 }
 
 .mod-arrow {
-  width: 28px; height: 28px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-elevated);
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -131,7 +151,8 @@
 }
 
 .mod-card:hover .mod-arrow {
-  background: rgba(99,102,241,0.1);
-  border-color: rgba(99,102,241,0.3);
-  color: var(--accent-secondary);
+  background: rgba(0, 212, 255, 0.1);
+  border-color: rgba(0, 212, 255, 0.2);
+  color: var(--accent-cyan);
+  transform: translateX(2px);
 }

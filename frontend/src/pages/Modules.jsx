@@ -23,8 +23,8 @@ export default function Modules() {
             <p className="page-subtitle">Structured curriculum from fundamentals to advanced AI & ML concepts</p>
           </div>
           <div className="modules-progress-pill">
-            <CheckCircle size={14} />
-            <span>{completedMods.length} / {modules.length} completed</span>
+            <CheckCircle size={15} style={{ opacity: 0.8 }} />
+            <span>{completedMods.length} / {modules.length} modules completed</span>
           </div>
         </div>
       </div>

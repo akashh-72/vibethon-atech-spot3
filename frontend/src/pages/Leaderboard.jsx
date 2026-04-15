@@ -57,7 +57,11 @@ export default function Leaderboard() {
               { key: "level",   label: "By Level"   },
               { key: "modules", label: "By Modules" },
             ].map(s => (
-              <button key={s.key} className={`filter-tab ${sortBy === s.key ? "active" : ""}`} onClick={() => setSortBy(s.key)}>
+              <button 
+                key={s.key} 
+                className={`filter-tab ${sortBy === s.key ? "active" : ""}`} 
+                onClick={() => setSortBy(s.key)}
+              >
                 {s.label}
               </button>
             ))}
@@ -67,12 +71,12 @@ export default function Leaderboard() {
 
       {/* My rank banner */}
       {me && myRank > 0 && (
-        <div className="lb-my-rank card">
+        <div className="lb-my-rank">
           <div className="lb-my-rank-left">
             <div className="lb-my-avatar">{(me.displayName || "?")[0].toUpperCase()}</div>
             <div>
               <div className="lb-my-name">{me.displayName || "You"}</div>
-              <div className="lb-my-sub">Your current position</div>
+              <div className="lb-my-sub">Current Global Position</div>
             </div>
           </div>
           <div className="lb-my-stats">
@@ -85,12 +89,8 @@ export default function Leaderboard() {
               <div className="lb-my-stat-label">XP</div>
             </div>
             <div className="lb-my-stat">
-              <div className="lb-my-stat-val" style={{ color: "var(--accent-secondary)" }}>Lv.{me.level || 1}</div>
+              <div className="lb-my-stat-val" style={{ color: "var(--accent-cyan)" }}>Lv.{me.level || 1}</div>
               <div className="lb-my-stat-label">Level</div>
-            </div>
-            <div className="lb-my-stat">
-              <div className="lb-my-stat-val" style={{ color: "var(--accent-emerald)" }}>{(me.completedModules || []).length}</div>
-              <div className="lb-my-stat-label">Modules</div>
             </div>
           </div>
         </div>
@@ -101,19 +101,25 @@ export default function Leaderboard() {
         <div className="lb-podium">
           {[sorted[1], sorted[0], sorted[2]].map((u, i) => {
             const rankNum = [2, 1, 3][i];
-            const colors  = ["#94a3b8", "#f59e0b", "#b45309"];
-            const bgs     = ["rgba(148,163,184,0.08)", "rgba(245,158,11,0.08)", "rgba(180,83,9,0.08)"];
-            const borders = ["rgba(148,163,184,0.2)",  "rgba(245,158,11,0.3)",  "rgba(180,83,9,0.2)"];
+            const colors  = ["#94a3b8", "var(--accent-cyan)", "#b45309"];
+            const glow    = ["none", "0 0 20px rgba(0, 212, 255, 0.2)", "none"];
             return (
-              <div key={u.uid} className={`podium-slot rank-${rankNum}`}
-                style={{ background: bgs[i], borderColor: borders[i], '--h': [180, 220, 160][i] + 'px' }}>
+              <div 
+                key={u.uid} 
+                className={`podium-slot rank-${rankNum}`}
+                style={{ 
+                  '--h': [180, 220, 160][i] + 'px',
+                  borderTop: `2px solid ${colors[i]}`,
+                  boxShadow: glow[i]
+                }}
+              >
                 <div className="podium-rank-num" style={{ color: colors[i] }}>#{rankNum}</div>
-                <div className="podium-avatar" style={{ borderColor: colors[i] + "60" }}>
+                <div className="podium-avatar" style={{ borderColor: colors[i] + "40" }}>
                   {(u.displayName || "?")[0].toUpperCase()}
                 </div>
                 <div className="podium-name">{(u.displayName || "User").split(" ")[0]}</div>
                 <div className="podium-xp" style={{ color: colors[i] }}>
-                  <Zap size={11} /> {u.xp || 0} XP
+                   {u.xp || 0} XP
                 </div>
               </div>
             );
@@ -123,11 +129,11 @@ export default function Leaderboard() {
 
       {/* Table */}
       {loading ? (
-        <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
+        <div style={{ display: "flex", justifyContent: "center", padding: 60 }}>
           <div className="spinner" />
         </div>
       ) : (
-        <div className="lb-table card" style={{ padding: 0, overflow: "hidden" }}>
+        <div className="lb-table">
           <div className="lb-table-head">
             <div className="lb-col lc-rank">Rank</div>
             <div className="lb-col lc-user">Learner</div>
