@@ -6,10 +6,10 @@ import "./Auth.css";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [form, setForm]       = useState({ email: "", password: "" });
-  const [error, setError]     = useState("");
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [show, setShow]       = useState(false);
+  const [show, setShow] = useState(false);
 
   const handleChange = e => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
 
@@ -91,7 +91,7 @@ export default function Login() {
           </div>
 
           <button className="btn btn-primary btn-lg auth-submit" type="submit" disabled={loading}>
-            {loading ? <span className="auth-spinner" /> : <><span>Sign In</span><ArrowRight size={16}/></>}
+            {loading ? <span className="auth-spinner" /> : <><span>Sign In</span><ArrowRight size={16} /></>}
           </button>
         </form>
 

@@ -22,7 +22,7 @@ import Docs from "./pages/Docs";
 import PublicLayout from "./components/layout/PublicLayout";
 import { Menu, Brain } from "lucide-react";
 
-import Chatbot from "./components/common/Chatbot";
+import TutorBot from "./components/common/TutorBot";
 
 import "./styles/global.css";
 import "./App.css";
@@ -62,6 +62,7 @@ function AuthenticatedLayout({ children }) {
       <MobileHeader onMenuOpen={() => setMobileMenuOpen(true)} />
       <Navbar isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
       <main className="main-content">{children}</main>
+      <TutorBot />
     </div>
   );
 }
@@ -141,7 +142,6 @@ function App() {
     <AuthProvider>
       <Router>
         <AppRoutes />
-        <Chatbot />
       </Router>
     </AuthProvider>
   );

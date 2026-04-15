@@ -15,14 +15,15 @@ LearNova is a state-of-the-art, full-stack educational platform designed to make
 
 | Feature | Description |
 |:---|:---|
-| 🔐 **Smart Auth** | Secure Firebase-powered authentication with custom user profile generation. |
-| 📚 **Progressive Modules** | 4-tier curriculum: Intro to AI → Supervised Learning → Neural Networks → NLP. |
-| 🧪 **Integrated Quizzes** | Test your knowledge with instant feedback, deep-dive explanations, and XP rewards. |
+| 🔐 **Premium Auth** | Secure Firebase-powered authentication with **Google OAuth** and automated streak tracking. |
+| 📚 **Expert Curriculum** | Structured modules enriched with curated expert-led external resources and visual aids. |
+| 🦾 **AI TutorBot** | A dedicated floating AI assistant providing real-time explanations for complex AIML topics. |
+| 🧪 **Code Quizzes** | Test your knowledge with MCQs and **interactive coding challenges** for practical validation. |
 | 💻 **ML Playground** | An in-browser IDE (Monaco) with a custom Python-style execution engine for AI logic. |
+| 🏎️ **Vision AI Sim** | High-fidelity Image Classification demo featuring CNN-based feature extraction visualizations. |
+| 🏆 **Advanced Gamification** | Automated badge-awarding engine, daily streaks, XP progression, and live global leaderboards. |
 | 🎮 **AI Mini-Games** | Learn by doing: Build decision trees or visualize neural network activations in real-time. |
-| 🔬 **Real-World Simulators** | Practical applications like Spam Detection and Iris Classification species prediction. |
-| 🏆 **Leaderboard** | Compete globally with a live ranking system based on XP, levels, and badges. |
-| 📱 **High-Fidelity UI** | Fully responsive, mobile-first design with a modern "Agora.io" dark-themed aesthetic. |
+| 📱 **LeetCode-Aesthetic UI** | Modern, professional design inspired by top-tier technical platforms like Agora.io and LeetCode. |
 
 ---
 
@@ -31,7 +32,7 @@ LearNova is a state-of-the-art, full-stack educational platform designed to make
 ### Prerequisites
 - **Node.js** (v18.0.0 or higher)
 - **npm** or **yarn**
-- **Git**
+- **Firebase Account** (Auth & Realtime Database enabled)
 
 ### 📦 Installation Steps
 
@@ -41,69 +42,40 @@ git clone https://github.com/akashh-72/vibethon-atech-spot3.git
 cd LearNova
 ```
 
-#### 2. Backend Setup
-```bash
-cd backend
-npm install
-# Note: Ensure you have your Firebase Admin credentials configured for token verification
-npm run dev
-```
-*Backend runs on: `http://localhost:5000`*
+#### 2. Environment Configuration
+- **Backend**: Create a `.env` in `backend/` with `FIREBASE_SERVICE_ACCOUNT` (JSON format).
+- **Frontend**: Configuration is pre-set in `frontend/src/services/firebase.js`. Ensure Google Auth is enabled in your Firebase project.
 
-#### 3. Frontend Setup
+#### 3. Run Locally
 ```bash
-cd ../frontend
+# Frontend
+cd frontend
 npm install
 npm run dev
+
+# Backend
+cd ../backend
+npm install
+npm run dev
 ```
-*Frontend runs on: `http://localhost:5173`*
 
 ---
 
-## 🛡️ Firebase Configuration
+## 🛡️ Gamification Engine
 
-LearNova uses **Firebase** for Authentication and Real-time Database.
-
-1.  **Frontend**: The configuration is pre-set in `frontend/src/services/firebase.js`.
-2.  **Backend**: To enable secure API requests, add your service account key:
-    - Create a `.env` file in the `backend/` directory.
-    - Add: `FIREBASE_SERVICE_ACCOUNT={"your":"json_key_here"}`
-    - Or provide the path: `GOOGLE_APPLICATION_CREDENTIALS=path/to/key.json`
+LearNova now features a sophisticated automated gamification engine:
+- **Daily Streaks**: Track your learning consistency; streaks reset if inactive for 24+ hours.
+- **Badge System**: Unlocks 6 unique achievements (e.g., "Scholar", "Quiz Master", "3-Day Streak") automatically once criteria are met.
+- **XP & Levels**: Earn XP through lessons and quizzes; every 200 XP advances your global rank.
 
 ---
 
-## 🚀 How to Use LearNova
+## 🚀 Technical Architecture
 
-### 1. Registration & Onboarding
-- Navigate to the **Register** page.
-- Sign up with your email and password.
-- Upon first login, you will automatically receive the **"First Step"** badge and 50 XP to jumpstart your journey.
-
-### 2. The Learning Path
-- **Modules**: Start with "Introduction to AI". Each lesson contains detailed prose and code snippets.
-- **Quizzes**: After every module, take the quiz. Scoring well yields high XP and unlocks specialized badges.
-- **Playground**: Experiment with the code snippets you learn in the dedicated Playground.
-
-### 3. Gamification Mechanics
-- **XP (Experience Points)**: Earned through quizzes and module completion.
-- **Levels**: Your level increases automatically for every **200 XP** earned.
-- **Badges**: Unlock 6 unique badges based on your achievements (e.g., "Beginner", "Intermediate", "Quiz Master").
-
----
-
-## 💻 Technical Architecture
-
-### Tech Stack
-- **Frontend**: React 19, react-router-dom, framer-motion, lucide-react.
-- **Editor**: `@monaco-editor/react` (VS Code engine).
+- **Frontend**: React 19, Framer Motion (Animations), Lucide (Icons), Monaco Editor.
 - **Backend**: Node.js, Express, Firebase Admin SDK.
-- **Styling**: Vanilla CSS (Custom Design System with dynamic theming).
-
-### Responsive Design
-LearNova uses a custom-built responsive engine:
-- **Desktop**: Fixed sidebar for efficient navigation.
-- **Mobile/Tablet**: Transforms into a sliding drawer system for maximum content real-estate.
-- **Breakpoints**: 1024px (Drawer toggle), 768px (Grid reflow), 480px (Mobile optimizations).
+- **Logic**: Custom Python-to-JS transpiler for the in-browser sandbox.
+- **Style**: Pure Vanilla CSS following a high-fidelity Design System.
 
 ---
 
@@ -112,8 +84,8 @@ LearNova uses a custom-built responsive engine:
 - [x] **Working Prototype** - Fully functional E2E.
 - [x] **Mobile First** - 100% responsive across all devices.
 - [x] **Real-world Value** - Practical ML simulations and playground.
-- [x] **Engagement** - Advanced gamification and leaderboard.
-- [x] **Clean Code** - Modular React components and structured backend.
+- [x] **Engagement** - Advanced gamification and AI assistant.
+- [x] **Clean Code** - Modular React components and structured logic.
 
 ---
 

@@ -1,0 +1,232 @@
+.tutor-bot-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.tutor-toggle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--gradient-brand);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 32px var(--accent-glow);
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.tutor-toggle.active {
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  color: var(--text-muted);
+  box-shadow: var(--shadow-xl);
+}
+
+.tutor-ping {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #fff;
+  color: var(--accent-primary);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(255,255,255,0.5);
+  animation: float 2s infinite ease-in-out;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.tutor-chat-window {
+  width: 320px;
+  height: 480px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow-2xl);
+}
+
+.tutor-header {
+  padding: 16px;
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tutor-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tutor-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.online-indicator {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  background: var(--accent-emerald);
+  border: 2px solid var(--bg-card);
+  border-radius: 50%;
+}
+
+.tutor-header-info h4 {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.tutor-header-info span {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+}
+
+.tutor-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.tutor-close:hover {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+
+.tutor-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: radial-gradient(circle at 50% 10% , rgba(99, 102, 241, 0.03), transparent 70%);
+}
+
+.msg-group {
+  display: flex;
+  flex-direction: column;
+  max-width: 85%;
+}
+
+.msg-group.bot { align-self: flex-start; }
+.msg-group.user { align-self: flex-end; }
+
+.msg-bubble {
+  padding: 12px 14px;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  border-radius: 12px;
+}
+
+.bot .msg-bubble {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border-bottom-left-radius: 2px;
+}
+
+.user .msg-bubble {
+  background: var(--accent-primary);
+  color: #fff;
+  border-bottom-right-radius: 2px;
+}
+
+.tutor-input-area {
+  padding: 16px;
+  background: rgba(255,255,255,0.01);
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+}
+
+.tutor-input-area input {
+  flex: 1;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  color: #fff;
+  font-size: 0.8125rem;
+}
+
+.tutor-input-area input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.tutor-input-area button {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--accent-primary);
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.tutor-input-area button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Typing anim */
+.typing {
+  display: flex;
+  gap: 4px;
+  padding: 12px 16px !important;
+}
+
+.typing span {
+  width: 6px;
+  height: 6px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  animation: typing 1s infinite ease-in-out;
+}
+
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50% { transform: translateY(-3px); opacity: 1; }
+}

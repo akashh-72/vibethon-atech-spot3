@@ -4,6 +4,7 @@ import { modules } from "../data/modules";
 import { useAuth } from "../context/AuthContext";
 import { ref, update } from "firebase/database";
 import { db } from "../services/firebase";
+import { checkAndAwardBadges } from "../services/gamification";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft, ChevronRight, CheckCircle, BookOpen,
@@ -47,8 +48,16 @@ export default function ModuleDetail() {
       if (newCompleted.length === module.lessons.length) {
         const prevMods = userProfile?.completedModules || [];
         if (!prevMods.includes(moduleId)) {
-          updates[`users/${user.uid}/completedModules`] = [...prevMods, moduleId];
-          updates[`users/${user.uid}/xp`] = (userProfile?.xp || 0) + module.xp;
+          const updatedModules = [...prevMods, moduleId];
+          updates[`users/${user.uid}/completedModules`] = updatedModules;
+          const newXP = (userProfile?.xp || 0) + module.xp;
+          updates[`users/${user.uid}/xp`] = newXP;
+          
+          await checkAndAwardBadges(user.uid, {
+            ...userProfile,
+            completedModules: updatedModules,
+            xp: newXP
+          });
         }
       }
 

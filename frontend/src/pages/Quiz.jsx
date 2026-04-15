@@ -5,6 +5,8 @@ import { modules } from "../data/modules";
 import { useAuth } from "../context/AuthContext";
 import { ref, update } from "firebase/database";
 import { db } from "../services/firebase";
+import { awardXP, checkAndAwardBadges } from "../services/gamification";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft, ChevronRight, CheckCircle, XCircle,
   Trophy, RotateCcw, BookOpen, Zap, Target
@@ -48,21 +50,31 @@ export default function Quiz() {
 
   const saveScore = async () => {
     if (!user) return;
-    const correct = answers.filter(a => a.chosen === a.correct).length + (selected === quiz[qIdx].answer ? 1 : 0);
+    const currentQuestion = quiz[qIdx];
+    const correctCount = answers.filter(a => a.chosen === a.correct).length + (selected === (currentQuestion.type === "code" ? currentQuestion.expected : currentQuestion.answer) ? 1 : 0);
     const total = quiz.length;
-    const score = Math.round((correct / total) * 100);
+    const score = Math.round((correctCount / total) * 100);
     const xpGain = Math.round(score * 0.5);
+    
     setSaving(true);
     try {
-      const prevScores = userProfile?.quizScores || {};
-      const prevXP = userProfile?.xp || 0;
-      const newXP = prevXP + xpGain;
+      const currentXP = userProfile?.xp || 0;
       await update(ref(db, `users/${user.uid}`), {
         [`quizScores/${selectedModule}`]: score,
-        xp: newXP,
-        level: Math.floor(newXP / 200) + 1,
       });
-    } catch (e) {}
+      
+      const { newXP, newLevel } = await awardXP(user.uid, currentXP, xpGain);
+      
+      // Check for badges with updated profile info
+      await checkAndAwardBadges(user.uid, { 
+        ...userProfile, 
+        xp: newXP, 
+        level: newLevel,
+        quizScores: { ...userProfile?.quizScores, [selectedModule]: score }
+      });
+    } catch (e) {
+      console.error("Failed to save score:", e);
+    }
     setSaving(false);
   };
 
@@ -174,7 +186,6 @@ export default function Quiz() {
 
   // Active quiz
   const question = quiz[qIdx];
-  const isCorrect = selected === (question.type === "code" ? question.expected : question.answer);
 
   const handleCodeSubmit = (val) => {
     if (answered) return;
