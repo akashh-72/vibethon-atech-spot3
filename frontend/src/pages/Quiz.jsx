@@ -174,7 +174,14 @@ export default function Quiz() {
 
   // Active quiz
   const question = quiz[qIdx];
-  const isCorrect = selected === question.answer;
+  const isCorrect = selected === (question.type === "code" ? question.expected : question.answer);
+
+  const handleCodeSubmit = (val) => {
+    if (answered) return;
+    setSelected(val);
+    setAnswered(true);
+    setAnswers(prev => [...prev, { q: qIdx, chosen: val, correct: question.expected }]);
+  };
 
   return (
     <div className="page-wrapper animate-fade-in">
@@ -197,34 +204,69 @@ export default function Quiz() {
         className="stat-card quiz-card"
         style={{ padding: '32px 40px' }}
       >
-        <span className="quiz-q-label">Current Question</span>
+        <span className="quiz-q-label">{question.type === "code" ? "Coding Challenge" : "Multiple Choice"}</span>
         <h2 className="quiz-question">{question.question}</h2>
 
-        <div className="quiz-options">
-          {question.options.map((opt, i) => {
-            const marker = ["A", "B", "C", "D"][i];
-            return (
-              <button
-                key={i}
-                className={`quiz-option ${answered ? (i === question.answer ? "correct" : selected === i ? "wrong" : "dimmed") : ""}`}
-                onClick={() => handleAnswer(i)}
-                disabled={answered}
-              >
-                <div className="quiz-opt-marker">{marker}</div>
-                <span className="quiz-opt-text">{opt}</span>
-              </button>
-            );
-          })}
-        </div>
+        {question.type === "code" ? (
+          <div className="quiz-code-area">
+            <div className="quiz-code-editor-mock">
+              <pre className="quiz-code-snippet">
+                {question.snippet.split("[?]").map((part, i, arr) => (
+                  <span key={i}>
+                    {part}
+                    {i < arr.length - 1 && (
+                      <input
+                        type="text"
+                        className={`quiz-code-input ${answered ? (selected?.toLowerCase() === question.expected.toLowerCase() ? "correct" : "wrong") : ""}`}
+                        placeholder="..."
+                        autoFocus
+                        disabled={answered}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && e.target.value.trim()) {
+                            handleCodeSubmit(e.target.value.trim());
+                          }
+                        }}
+                      />
+                    )}
+                  </span>
+                ))}
+              </pre>
+            </div>
+            {!answered && (
+              <p className="quiz-hint-text">Type the missing part and press <strong>Enter</strong></p>
+            )}
+          </div>
+        ) : (
+          <div className="quiz-options">
+            {question.options.map((opt, i) => {
+              const marker = ["A", "B", "C", "D"][i];
+              return (
+                <button
+                  key={i}
+                  className={`quiz-option ${answered ? (i === question.answer ? "correct" : selected === i ? "wrong" : "dimmed") : ""}`}
+                  onClick={() => handleAnswer(i)}
+                  disabled={answered}
+                >
+                  <div className="quiz-opt-marker">{marker}</div>
+                  <span className="quiz-opt-text">{opt}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {answered && (
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`quiz-explanation ${selected === question.answer ? "correct" : "wrong"}`}
+            className={`quiz-explanation ${
+              question.type === "code" 
+                ? (selected?.toLowerCase() === question.expected.toLowerCase() ? "correct" : "wrong")
+                : (selected === question.answer ? "correct" : "wrong")
+            }`}
           >
             <div className="quiz-exp-label">
-              {selected === question.answer ? (
+              {(question.type === "code" ? selected?.toLowerCase() === question.expected.toLowerCase() : selected === question.answer) ? (
                 <><CheckCircle size={15} /> Correct Answer</>
               ) : (
                 <><XCircle size={15} /> Not quite right</>

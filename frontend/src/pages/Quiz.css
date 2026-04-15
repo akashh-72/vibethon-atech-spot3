@@ -415,3 +415,73 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Code Challenge Styles */
+.quiz-code-area {
+  margin-bottom: 32px;
+}
+
+.quiz-code-editor-mock {
+  background: #0d1117;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+}
+
+.quiz-code-snippet {
+  color: #e6edf3;
+  font-size: 14px;
+  line-height: 1.8;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.quiz-code-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: var(--accent-cyan);
+  padding: 2px 8px;
+  font-family: inherit;
+  font-size: 14px;
+  width: 100px;
+  transition: all 0.2s ease;
+  margin: 0 4px;
+  text-align: center;
+}
+
+.quiz-code-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.quiz-code-input.correct {
+  border-color: var(--accent-emerald);
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--accent-emerald);
+}
+
+.quiz-code-input.wrong {
+  border-color: var(--accent-rose);
+  background: rgba(244, 63, 94, 0.1);
+  color: var(--accent-rose);
+}
+
+.quiz-hint-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.quiz-hint-text strong {
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}

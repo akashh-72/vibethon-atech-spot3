@@ -1,180 +1,126 @@
 # 🚀 LearNova — Interactive AI/ML Learning Platform
 
-> **VIBETHON 2025** rapid prototype — built with React, Node.js, and Firebase.
+[![React](https://img.shields.io/badge/React-19-blue.svg)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-6-purple.svg)](https://vitejs.dev/)
+[![Firebase](https://img.shields.io/badge/Firebase-Auth/DB-orange.svg)](https://firebase.google.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-LearNova is a full-stack interactive web platform that makes learning **Artificial Intelligence and Machine Learning** engaging, practical, and accessible through structured modules, quizzes, mini-games, simulations, and gamification.
+> **VIBETHON 2025 Submission** — Transform complex AI concepts into interactive, playable experiences.
+
+LearNova is a state-of-the-art, full-stack educational platform designed to make **Artificial Intelligence and Machine Learning** accessible to everyone. From absolute beginners to advanced learners, LearNova provides a structured, gamified path involving interactive lessons, real-world simulations, and a fully-featured code playground.
 
 ---
 
-## 📸 Features
+## 🌟 Key Features
 
 | Feature | Description |
-|---|---|
-| 🔐 **Authentication** | Firebase email/password login & registration |
-| 📚 **Learning Modules** | 4 structured modules: Beginner → Advanced (AI Intro, Supervised Learning, Neural Networks, NLP) |
-| 🧪 **Quiz System** | 5 MCQs per module with instant feedback, explanations & XP scoring |
-| 💻 **Code Playground** | Monaco editor with in-browser Python-style code execution |
-| 🎮 **Mini-Games** | Decision Tree Builder, Neural Network Visualizer, Classification Challenge |
-| 🔬 **Simulations** | Spam Detection (keyword-based) + Iris Classification (Decision Tree) |
-| ⚡ **Progress Dashboard** | XP, level, streak, badges, completed modules |
-| 🏆 **Leaderboard** | Live rankings with podium, badges, and sort options |
-| 📱 **Responsive Design** | Mobile, tablet, and desktop support |
+|:---|:---|
+| 🔐 **Smart Auth** | Secure Firebase-powered authentication with custom user profile generation. |
+| 📚 **Progressive Modules** | 4-tier curriculum: Intro to AI → Supervised Learning → Neural Networks → NLP. |
+| 🧪 **Integrated Quizzes** | Test your knowledge with instant feedback, deep-dive explanations, and XP rewards. |
+| 💻 **ML Playground** | An in-browser IDE (Monaco) with a custom Python-style execution engine for AI logic. |
+| 🎮 **AI Mini-Games** | Learn by doing: Build decision trees or visualize neural network activations in real-time. |
+| 🔬 **Real-World Simulators** | Practical applications like Spam Detection and Iris Classification species prediction. |
+| 🏆 **Leaderboard** | Compete globally with a live ranking system based on XP, levels, and badges. |
+| 📱 **High-Fidelity UI** | Fully responsive, mobile-first design with a modern "Agora.io" dark-themed aesthetic. |
 
 ---
 
-## 🗂️ Project Structure
-
-```
-LearNova/
-├── frontend/               # React + Vite app
-│   ├── src/
-│   │   ├── components/     # auth/, layout/, common/, dashboard/
-│   │   ├── pages/          # All page components
-│   │   ├── services/       # firebase.js, auth.js, api.js
-│   │   ├── context/        # AuthContext.jsx
-│   │   ├── data/           # modules.js, quizData.js
-│   │   └── styles/         # global.css
-│   └── package.json
-│
-├── backend/                # Node.js + Express API
-│   ├── src/
-│   │   ├── config/         # Firebase Admin SDK setup
-│   │   ├── controllers/    # Business logic handlers
-│   │   ├── middlewares/    # Auth verification, Error handling
-│   │   └── routes/         # Express route definitions
-│   └── package.json
-│
-└── README.md
-```
-
----
-
-## ⚙️ Setup Instructions
+## ⚙️ Setup & Installation Guide
 
 ### Prerequisites
-- **Node.js** v18+ and npm
-- A Firebase project (already configured — credentials in `frontend/src/services/firebase.js`)
+- **Node.js** (v18.0.0 or higher)
+- **npm** or **yarn**
+- **Git**
 
-### 1. Clone & Install
+### 📦 Installation Steps
 
+#### 1. Clone the Repository
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/learnova.git
-cd learnova
+git clone https://github.com/akashh-72/vibethon-atech-spot3.git
+cd LearNova
 ```
 
-### 2. Frontend Setup
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Frontend runs at → **http://localhost:5173**
-
-### 3. Backend Setup
-
+#### 2. Backend Setup
 ```bash
 cd backend
 npm install
-
-# Install nodemon for development hot-reload
-npm install -g nodemon
-
+# Note: Ensure you have your Firebase Admin credentials configured for token verification
 npm run dev
 ```
+*Backend runs on: `http://localhost:5000`*
 
-Backend API runs at → **http://localhost:5000**
-
----
-
-## 🔥 Firebase Configuration
-
-Firebase is already configured with the provided credentials. The frontend uses the **Firebase Client SDK** directly for:
-- Auth (email/password)
-- Realtime Database (user profiles, progress, leaderboard)
-
-The backend uses **Firebase Admin SDK** for server-side token verification. To enable it:
-1. Go to Firebase Console → Project Settings → Service Accounts
-2. Generate a new private key (JSON)
-3. Add it to `backend/.env` as `FIREBASE_SERVICE_ACCOUNT`
-
-> **Note:** The platform works fully without the backend — all core features use the Firebase client SDK directly from the frontend.
-
----
-
-## 🎮 Platform Pages
-
-| Route | Page | Description |
-|---|---|---|
-| `/` | Home | Landing page with features overview |
-| `/register` | Register | Create account |
-| `/login` | Login | Sign in |
-| `/dashboard` | Dashboard | XP, stats, badges, leaderboard preview |
-| `/modules` | Modules | Browse all learning modules |
-| `/modules/:id` | Module Detail | Read lessons + code examples |
-| `/quiz` | Quiz Selector | Pick a module quiz |
-| `/quiz/:id` | Quiz Runner | Take the quiz with instant feedback |
-| `/playground` | Playground | Write & run Python-style code |
-| `/games` | Games | Three interactive mini-games |
-| `/simulations` | Simulations | Spam detection + Iris classification |
-| `/leaderboard` | Leaderboard | Rankings with podium and badges |
-
----
-
-## 🧪 Demo Credentials
-
+#### 3. Frontend Setup
+```bash
+cd ../frontend
+npm install
+npm run dev
 ```
-Email:    demo@learnova.ai
-Password: demo123
-```
-> Create this account via the Register page to use as a demo.
+*Frontend runs on: `http://localhost:5173`*
 
 ---
 
-## 🛠️ Tech Stack
+## 🛡️ Firebase Configuration
 
-| Layer | Technology |
-|---|---|
-| Frontend Framework | React 18 + Vite |
-| Routing | React Router DOM v6 |
-| Styling | Vanilla CSS (custom design system) |
-| Code Editor | Monaco Editor (`@monaco-editor/react`) |
-| Authentication | Firebase Auth |
-| Database | Firebase Realtime Database |
-| Backend | Node.js + Express |
-| Backend Auth | Firebase Admin SDK |
-| Middleware | Helmet, CORS, Morgan |
+LearNova uses **Firebase** for Authentication and Real-time Database.
+
+1.  **Frontend**: The configuration is pre-set in `frontend/src/services/firebase.js`.
+2.  **Backend**: To enable secure API requests, add your service account key:
+    - Create a `.env` file in the `backend/` directory.
+    - Add: `FIREBASE_SERVICE_ACCOUNT={"your":"json_key_here"}`
+    - Or provide the path: `GOOGLE_APPLICATION_CREDENTIALS=path/to/key.json`
 
 ---
 
-## 📈 Gamification System
+## 🚀 How to Use LearNova
 
-- **XP** — Earned by completing modules and quizzes
-- **Levels** — Every 200 XP = 1 Level up
-- **Badges** — First Login, Beginner, Intermediate, Advanced, Quiz Master, 3-Day Streak
-- **Leaderboard** — Live ranking by XP, Level, or Modules completed
-- **Streaks** — Daily login tracking
+### 1. Registration & Onboarding
+- Navigate to the **Register** page.
+- Sign up with your email and password.
+- Upon first login, you will automatically receive the **"First Step"** badge and 50 XP to jumpstart your journey.
+
+### 2. The Learning Path
+- **Modules**: Start with "Introduction to AI". Each lesson contains detailed prose and code snippets.
+- **Quizzes**: After every module, take the quiz. Scoring well yields high XP and unlocks specialized badges.
+- **Playground**: Experiment with the code snippets you learn in the dedicated Playground.
+
+### 3. Gamification Mechanics
+- **XP (Experience Points)**: Earned through quizzes and module completion.
+- **Levels**: Your level increases automatically for every **200 XP** earned.
+- **Badges**: Unlock 6 unique badges based on your achievements (e.g., "Beginner", "Intermediate", "Quiz Master").
 
 ---
 
-## 📌 VIBETHON Checklist
+## 💻 Technical Architecture
 
-- [x] Working prototype
-- [x] User Authentication (Firebase email/password)
-- [x] Structured Learning Modules (4 modules, Beginner → Advanced)
-- [x] Interactive Quiz System (MCQs with instant feedback)
-- [x] Code Playground (Monaco editor + in-browser runner)
-- [x] Mini-Games (3 games)
-- [x] Real-World Simulations (Spam detection + Iris classification)
-- [x] Progress Dashboard
-- [x] Leaderboard & Gamification
-- [x] Responsive Design (mobile + tablet + desktop)
-- [x] GitHub Repository with clean structure
+### Tech Stack
+- **Frontend**: React 19, react-router-dom, framer-motion, lucide-react.
+- **Editor**: `@monaco-editor/react` (VS Code engine).
+- **Backend**: Node.js, Express, Firebase Admin SDK.
+- **Styling**: Vanilla CSS (Custom Design System with dynamic theming).
+
+### Responsive Design
+LearNova uses a custom-built responsive engine:
+- **Desktop**: Fixed sidebar for efficient navigation.
+- **Mobile/Tablet**: Transforms into a sliding drawer system for maximum content real-estate.
+- **Breakpoints**: 1024px (Drawer toggle), 768px (Grid reflow), 480px (Mobile optimizations).
+
+---
+
+## 🏆 VIBETHON 2025 Checklist
+
+- [x] **Working Prototype** - Fully functional E2E.
+- [x] **Mobile First** - 100% responsive across all devices.
+- [x] **Real-world Value** - Practical ML simulations and playground.
+- [x] **Engagement** - Advanced gamification and leaderboard.
+- [x] **Clean Code** - Modular React components and structured backend.
 
 ---
 
 ## 📄 License
 
-MIT © LearNova Team — VIBETHON 2025
+This project is licensed under the **MIT License**.
+
+---
+
+Built with ❤️ for **VIBETHON 2025** by **Akash & Team**.

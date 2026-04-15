@@ -20,39 +20,55 @@ const SAMPLES = [
   {
     label: "Linear Regression",
     code:
-"# Simple Linear Regression\n" +
-"# y = mx + b\n" +
+"# Simple Linear Regression: y = mx + b\n" +
 "\n" +
 "def predict(x, m=200, b=50000):\n" +
 "    return m * x + b\n" +
 "\n" +
 "house_sizes = [800, 1200, 1500, 2000, 2500]\n" +
 'print("House Price Predictions:")\n' +
-'print("-" * 35)\n' +
+'print("-" * 30)\n' +
+"\n" +
 "for size in house_sizes:\n" +
 "    price = predict(size)\n" +
-'    print(str(size) + " sqft -> $" + str(price))\n',
+'    print("Size: " + str(size) + " sqft -> Price: $" + str(price))\n',
   },
   {
     label: "KNN Classifier",
     code:
-"# K-Nearest Neighbors\n" +
+"# K-Nearest Neighbors Simulation\n" +
 "def euclidean_distance(a, b):\n" +
 "    return abs(a - b)\n" +
 "\n" +
 "dataset = [\n" +
-'    (1.0, "Setosa"),\n' +
-'    (1.5, "Setosa"),\n' +
-'    (4.0, "Versicolor"),\n' +
-'    (4.5, "Versicolor"),\n' +
-'    (7.0, "Virginica"),\n' +
+'    [1.0, "Setosa"],\n' +
+'    [1.5, "Setosa"],\n' +
+'    [4.0, "Versicolor"],\n' +
+'    [4.5, "Versicolor"],\n' +
+'    [7.0, "Virginica"]\n' +
 "]\n" +
 "\n" +
 "def knn(new_point, k=3):\n" +
-"    dists = [(euclidean_distance(new_point, p), label) for p, label in dataset]\n" +
+"    dists = []\n" +
+"    for pt in dataset:\n" +
+"        d = euclidean_distance(new_point, pt[0])\n" +
+"        dists.append([d, pt[1]])\n" +
+"    \n" +
 "    dists.sort()\n" +
-"    k_near = [label for _, label in dists[:k]]\n" +
-"    return max(set(k_near), key=k_near.count)\n" +
+"    \n" +
+"    # Vote for the most frequent label in top-k\n" +
+"    votes = {}\n" +
+"    for i in range(k):\n" +
+"        label = dists[i][1]\n" +
+"        votes[label] = votes.get(label, 0) + 1\n" +
+"    \n" +
+"    best_label = None\n" +
+"    max_votes = -1\n" +
+"    for label in votes:\n" +
+"        if votes[label] > max_votes:\n" +
+"            max_votes = votes[label]\n" +
+"            best_label = label\n" +
+"    return best_label\n" +
 "\n" +
 "test_points = [1.2, 4.3, 6.8]\n" +
 "for pt in test_points:\n" +
@@ -68,109 +84,132 @@ const SAMPLES = [
 "def sigmoid(x):\n" +
 "    return 1 / (1 + math.exp(-x))\n" +
 "\n" +
-"def relu(x):\n" +
-"    return max(0, x)\n" +
-"\n" +
-'def neuron(inputs, weights, bias, activation="sigmoid"):\n' +
+'def neuron(inputs, weights, bias):\n' +
 "    total = 0\n" +
 "    for i in range(len(inputs)):\n" +
-"        total = total + inputs[i] * weights[i]\n" +
+"        total = total + (inputs[i] * weights[i])\n" +
+"    \n" +
 "    weighted_sum = total + bias\n" +
 '    print("Weighted Sum: " + str(round(weighted_sum, 4)))\n' +
-'    if activation == "sigmoid":\n' +
-"        out = sigmoid(weighted_sum)\n" +
-"    else:\n" +
-"        out = relu(weighted_sum)\n" +
-'    print("Output (" + activation + "): " + str(round(out, 4)))\n' +
-"    return out\n" +
+"    output = sigmoid(weighted_sum)\n" +
+'    print("Neuron Output: " + str(round(output, 4)))\n' +
+"    return output\n" +
 "\n" +
-'print("=== Sigmoid Activation ===")\n' +
-"neuron([0.5, 0.8, 0.3], [0.4, -0.6, 0.9], bias=0.1)\n" +
-"\n" +
-'print("=== ReLU Activation ===")\n' +
-'neuron([1.0, -0.5, 0.7], [0.3, 0.8, -0.4], bias=-0.2, activation="relu")\n',
+'print("Running Single Neuron Mockup...")\n' +
+"neuron([0.5, 0.8, 0.3], [0.4, -0.6, 0.9], bias=0.1)\n",
   },
   {
     label: "Spam Detector",
     code:
-"# Spam Detection\n" +
+"# Simple Keyword-Based Spam Detection\n" +
 "\n" +
-"SPAM_KEYWORDS = [\n" +
-'    "free", "win", "winner", "click here", "limited offer",\n' +
-'    "congratulations", "prize", "claim now", "urgent", "cash"\n' +
-"]\n" +
+"KEYWORDS = [\"free\", \"win\", \"claim\", \"cash\", \"urgent\"]\n" +
 "\n" +
-"def detect_spam(email_text):\n" +
-"    text_lower = email_text.lower()\n" +
-"    found = [kw for kw in SPAM_KEYWORDS if kw in text_lower]\n" +
-"    score = len(found) / len(SPAM_KEYWORDS)\n" +
-'    label = "SPAM" if score > 0.15 else "NOT SPAM"\n' +
-"    return label, found, round(score * 100, 1)\n" +
+"def detect_spam(text):\n" +
+"    text_lower = text.lower()\n" +
+"    found = []\n" +
+"    for kw in KEYWORDS:\n" +
+"        if kw in text_lower:\n" +
+"            found.append(kw)\n" +
+"    \n" +
+"    score = len(found) / len(KEYWORDS)\n" +
+'    is_spam = "SPAM" if score > 0.1 else "NOT SPAM"\n' +
+"    return is_spam, found\n" +
 "\n" +
-"emails = [\n" +
-'    "Congratulations! You win a free prize! Click here to claim now!",\n' +
-'    "Hey, are we still meeting for lunch tomorrow?",\n' +
-'    "URGENT: Free winner cash offer - limited offer only!",\n' +
-'    "Please find the attached project report for review.",\n' +
-"]\n" +
-"\n" +
-"for i, email in enumerate(emails):\n" +
-"    label, keywords, score = detect_spam(email)\n" +
-'    print("Email " + str(i+1) + ": " + label + " (score: " + str(score) + "%)")\n' +
-"    if keywords:\n" +
-'        print("  Keywords found: " + str(keywords))\n' +
-"    print()\n",
+'email = "URGENT: Click here to claim your free cash prize!"\n' +
+"label, words = detect_spam(email)\n" +
+'print("Analyzing: " + email)\n' +
+'print("Classification: " + label)\n' +
+'print("Keywords Found: " + str(words))\n',
   },
 ];
 
 function runPseudoPython(code) {
   const lines = [];
-  const fakeScope = { math: { exp: Math.exp } };
+  
+  // Custom scope with Python-like helpers
+  const fakeScope = {
+    math: { 
+      exp: Math.exp, 
+      pi: Math.PI, 
+      sqrt: Math.sqrt,
+      sin: Math.sin,
+      cos: Math.cos
+    },
+    str: (v) => String(v),
+    int: (v) => Math.floor(Number(v)),
+    round: (v, n) => Number(v).toFixed(n || 0),
+    abs: Math.abs,
+    len: (v) => (v ? v.length : 0),
+    print: (...args) => lines.push(args.join(" ")),
+    __out__: (v) => lines.push(String(v)),
+  };
 
-  let js = code
-    .replace(/^#.*$/gm, "")
-    .replace(/def (\w+)\((.*?)\):/g, "function $1($2){")
-    .replace(/elif /g, "else if ")
-    .replace(/True/g, "true").replace(/False/g, "false").replace(/None/g, "null")
-    .replace(/print\((.*?)\)/g, "__out__($1)")
-    .replace(/range\((\d+),\s*(\d+)\)/g, "Array.from({length:$2-$1},(_,i)=>i+$1)")
-    .replace(/range\((\d+)\)/g, "Array.from({length:$1},(_,i)=>i)")
-    .replace(/for (\w+) in (.*?):/g, "for (let $1 of $2){")
-    .replace(/import math/g, "")
-    .replace(/\babs\b/g, "Math.abs")
-    .replace(/\bmax\b\(([^,]+),\s*([^)]+)\)/g, "Math.max($1,$2)")
-    .replace(/\bmin\b\(([^)]+)\)/g, "Math.min($1)")
-    .replace(/\bround\b\(([^,]+),\s*(\d+)\)/g, "(Math.round($1*Math.pow(10,$2))/Math.pow(10,$2))")
-    .replace(/\blen\b\((.*?)\)/g, "($1).length")
-    .replace(/^\s{4}/gm, "");
+  // Simple string multiplication transformer: "str" * n -> "str".repeat(n)
+  let transformedCode = code
+    .replace(/^#.*$/gm, "") // Remove comments
+    .replace(/"(.*?)"\s*\*\s*(\d+)/g, '"$1".repeat($2)') // "txt" * 10
+    .replace(/'(.*?)'\s*\*\s*(\d+)/g, "'$1'.repeat($2)") // 'txt' * 10
+    .replace(/def (\w+)\((.*?)\):/g, "function $1($2){") // function def
+    .replace(/for (\w+) in (.*?):/g, "for (let $1 of $2){") // for loops
+    .replace(/if (.*?):/g, "if ($1){") // if
+    .replace(/elif (.*?):/g, "} else if ($1){") // elif
+    .replace(/else:/g, "} else {") // else
+    .replace(/while (.*?):/g, "while ($1){") // while
+    .replace(/\.append\(/g, ".push(") // list.append
+    .replace(/\.get\((.*?),\s*(.*?)\)/g, "[$1] || $2") // dict.get fallback (simple)
+    .replace(/True/g, "true")
+    .replace(/False/g, "false")
+    .replace(/None/g, "null")
+    .replace(/in (\w+)\.lower\(\)/g, ".indexOf($1.toLowerCase()) !== -1") // basic 'in' check
+    .replace(/(\w+) in (\w+)/g, "$2.includes($1)") // simple 'in' check
+    .replace(/print\((.*?)\)/g, "__out__($1)");
 
-  const processedLines = js.split("\n");
+  // Handle block closing based on indentation
+  const processedLines = transformedCode.split("\n");
   const result = [];
   const indentStack = [0];
+  
   for (let i = 0; i < processedLines.length; i++) {
     const line = processedLines[i];
     const trimmed = line.trim();
-    if (!trimmed) { result.push(""); continue; }
+    if (!trimmed) {
+      result.push("");
+      continue;
+    }
+    
     const indent = line.search(/\S/);
+    
+    // Close blocks if indentation decreases
     while (indentStack.length > 1 && indent < indentStack[indentStack.length - 1]) {
-      result.push("}");
+      result.push("  ".repeat(indentStack.length - 2) + "}");
       indentStack.pop();
     }
-    if (trimmed.endsWith("{")) indentStack.push(indent + 4);
+    
+    // Track new indentation level for functions/loops
+    if (trimmed.endsWith("{")) {
+      indentStack.push(indent + 4);
+    }
+    
     result.push(line);
   }
-  while (indentStack.length > 1) { result.push("}"); indentStack.pop(); }
-  js = result.join("\n");
+  
+  // Close any remaining blocks
+  while (indentStack.length > 1) {
+    result.push("  ".repeat(indentStack.length - 2) + "}");
+    indentStack.pop();
+  }
+  
+  const finalJs = result.join("\n");
 
   try {
-    new Function("__out__", "math", "Math", js)(
-      (v) => lines.push(String(v)),
-      fakeScope.math,
-      Math
-    );
+    // Create execution sandbox
+    const runner = new Function(...Object.keys(fakeScope), finalJs);
+    runner(...Object.values(fakeScope));
   } catch (e) {
-    lines.push(`Error: ${e.message}`);
+    lines.push(`Runtime Error: ${e.message}`);
   }
+  
   return lines.join("\n") || "(no output)";
 }
 
@@ -185,7 +224,6 @@ export default function Playground() {
   const handleRun = () => {
     setRunning(true);
     setOutput("");
-    // Switch to output on mobile for immediate result view
     if (window.innerWidth <= 1000) {
       setActiveTab("output");
     }
@@ -229,7 +267,6 @@ export default function Playground() {
         </div>
       </div>
 
-      {/* Mobile Tab Switcher */}
       <div className="pg-mobile-tabs">
         <button 
           className={`pg-mobile-tab ${activeTab === "editor" ? "active" : ""}`}
@@ -249,7 +286,6 @@ export default function Playground() {
       </div>
 
       <div className={`pg-layout pg-view-${activeTab}`}>
-        {/* Editor */}
         <div className="pg-editor-panel card" style={{ padding: 0, overflow: "hidden" }}>
           <div className="pg-editor-header">
             <div className="pg-window-dots">
@@ -277,9 +313,9 @@ export default function Playground() {
           <Editor
             height="calc(min(460px, 60vh))"
             defaultLanguage="python"
+            theme="vs-dark"
             value={code}
             onChange={(v) => setCode(v || "")}
-            theme="vs-dark"
             options={{
               fontSize: 13.5,
               fontFamily: "'JetBrains Mono', monospace",
@@ -289,15 +325,12 @@ export default function Playground() {
               padding: { top: 16, bottom: 16 },
               renderLineHighlight: "line",
               cursorBlinking: "smooth",
-              letterSpacing: 0.3,
-              lineHeight: 22,
-              roundedSelection: true,
               automaticLayout: true,
+              tabSize: 4,
             }}
           />
         </div>
 
-        {/* Output */}
         <div className="pg-output-panel">
           <div className="card" style={{ height: "100%", padding: 0, overflow: "hidden" }}>
             <div className="pg-output-header">
@@ -328,7 +361,6 @@ export default function Playground() {
             </div>
           </div>
 
-          {/* Tips */}
           <div className="pg-tips card card-sm">
             <div className="pg-tips-title">Quick Reference</div>
             <div className="pg-tips-list">

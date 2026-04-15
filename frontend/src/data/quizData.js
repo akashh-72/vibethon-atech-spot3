@@ -41,6 +41,14 @@ export const quizData = {
       answer: 2,
       explanation: "You must first collect and clean your data before any other steps in the ML workflow.",
     },
+    {
+      id: 6,
+      type: "code",
+      question: "Complete the Linear Regression formula: y = m * x + ?",
+      snippet: "def predict(x, m, b):\n    return m * x + [?]",
+      expected: "b",
+      explanation: "The standard linear equation is y = mx + b, where b is the y-intercept (bias).",
+    }
   ],
   "supervised-learning": [
     {
@@ -88,6 +96,14 @@ export const quizData = {
       answer: 2,
       explanation: "Despite its name, Logistic Regression is a classification algorithm that predicts the probability of a class.",
     },
+    {
+      id: 6,
+      type: "code",
+      question: "How do you add a new element to a list in Python?",
+      snippet: "data = [1, 2, 3]\ndata.[?](4)",
+      expected: "append",
+      explanation: "In Python, use the .append() method to add an item to the end of a list.",
+    }
   ],
   "neural-networks": [
     {
@@ -145,6 +161,14 @@ export const quizData = {
       answer: 1,
       explanation: "Weights are learnable parameters adjusted during training to minimize the network's prediction error.",
     },
+    {
+      id: 6,
+      type: "code",
+      question: "Complete the Sigmoid activation formula in code.",
+      snippet: "import math\ndef sigmoid(x):\n    return 1 / (1 + math.exp([?]))",
+      expected: "-x",
+      explanation: "The sigmoid function formula is 1 / (1 + e^-x).",
+    }
   ],
   nlp: [
     {
@@ -197,5 +221,13 @@ export const quizData = {
       answer: 1,
       explanation: "GPT (Generative Pre-trained Transformer) models are used for text generation, completion, and understanding.",
     },
+    {
+      id: 6,
+      type: "code",
+      question: "How do you convert a string to lowercase for NLP preprocessing?",
+      snippet: "text = 'Hello AI'\nclean_text = text.[?]()",
+      expected: "lower",
+      explanation: "Preprocessing usually involves converting text to lowercase using the .lower() method.",
+    }
   ],
 };
