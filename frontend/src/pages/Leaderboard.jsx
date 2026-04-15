@@ -2,153 +2,183 @@ import { useEffect, useState } from "react";
 import { ref, get } from "firebase/database";
 import { db } from "../services/firebase";
 import { useAuth } from "../context/AuthContext";
+import { Trophy, Zap, BookOpen, Star, Flame, Award, Target, ArrowUp } from "lucide-react";
 import "./Leaderboard.css";
 
-const BADGES = [
-  { id: "first-login",  icon: "🌟" },
-  { id: "beginner",     icon: "📗" },
-  { id: "intermediate", icon: "📘" },
-  { id: "quiz-master",  icon: "🧠" },
-  { id: "streak-3",     icon: "🔥" },
-  { id: "advanced",     icon: "🏅" },
+const BADGE_META = [
+  { id: "first-login",  icon: Star,    label: "First Login",   color: "#f59e0b" },
+  { id: "beginner",     icon: BookOpen, label: "Beginner",     color: "#10b981" },
+  { id: "intermediate", icon: Target,   label: "Intermediate", color: "#3b82f6" },
+  { id: "quiz-master",  icon: Trophy,   label: "Quiz Master",  color: "#8b5cf6" },
+  { id: "streak-3",     icon: Flame,    label: "3-Day Streak", color: "#f43f5e" },
+  { id: "advanced",     icon: Award,    label: "Advanced",     color: "#6366f1" },
 ];
 
 export default function Leaderboard() {
   const { user } = useAuth();
-  const [users, setUsers] = useState([]);
+  const [users, setUsers]   = useState([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("xp");
 
   useEffect(() => {
-    const fetch = async () => {
-      const snap = await get(ref(db, "users"));
-      if (snap.exists()) {
-        const data = Object.entries(snap.val()).map(([uid, u]) => ({ uid, ...u }));
-        setUsers(data);
-      }
+    const fetchUsers = async () => {
+      try {
+        const snap = await get(ref(db, "users"));
+        if (snap.exists()) {
+          setUsers(Object.entries(snap.val()).map(([uid, u]) => ({ uid, ...u })));
+        }
+      } catch (e) {}
       setLoading(false);
     };
-    fetch();
+    fetchUsers();
   }, []);
 
   const sorted = [...users].sort((a, b) => {
     if (sortBy === "xp")      return (b.xp || 0) - (a.xp || 0);
     if (sortBy === "level")   return (b.level || 1) - (a.level || 1);
-    if (sortBy === "modules") return (b.completedModules?.length || 0) - (a.completedModules?.length || 0);
+    if (sortBy === "modules") return ((b.completedModules || []).length) - ((a.completedModules || []).length);
     return 0;
   });
 
   const myRank = sorted.findIndex(u => u.uid === user?.uid) + 1;
-
-  if (loading) return <div className="loading-screen"><div className="spinner"/></div>;
+  const me     = sorted.find(u => u.uid === user?.uid);
 
   return (
-    <div className="leaderboard-page animate-fade-in">
+    <div className="page-wrapper animate-fade-in">
       <div className="page-header">
-        <h1 className="page-title">🏆 Leaderboard</h1>
-        <p className="page-subtitle">Compete, earn XP, and rise through the ranks</p>
+        <div className="page-header-row">
+          <div>
+            <h1 className="page-title">Leaderboard</h1>
+            <p className="page-subtitle">Compete with fellow learners and track your global ranking</p>
+          </div>
+          <div className="filter-tabs">
+            {[
+              { key: "xp",      label: "By XP"      },
+              { key: "level",   label: "By Level"   },
+              { key: "modules", label: "By Modules" },
+            ].map(s => (
+              <button key={s.key} className={`filter-tab ${sortBy === s.key ? "active" : ""}`} onClick={() => setSortBy(s.key)}>
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* My rank card */}
-      {myRank > 0 && (
-        <div className="my-rank-card glass-card">
-          <div className="my-rank-inner">
-            <div className="my-rank-label">Your Rank</div>
-            <div className="my-rank-num gradient-text">#{myRank}</div>
-          </div>
-          <div className="my-rank-inner">
-            <div className="my-rank-label">Your XP</div>
-            <div className="my-rank-num" style={{ color: "var(--accent-amber)" }}>
-              ⚡ {sorted.find(u => u.uid === user?.uid)?.xp || 0}
+      {/* My rank banner */}
+      {me && myRank > 0 && (
+        <div className="lb-my-rank card">
+          <div className="lb-my-rank-left">
+            <div className="lb-my-avatar">{(me.displayName || "?")[0].toUpperCase()}</div>
+            <div>
+              <div className="lb-my-name">{me.displayName || "You"}</div>
+              <div className="lb-my-sub">Your current position</div>
             </div>
           </div>
-          <div className="my-rank-inner">
-            <div className="my-rank-label">Modules</div>
-            <div className="my-rank-num" style={{ color: "var(--accent-green)" }}>
-              📚 {sorted.find(u => u.uid === user?.uid)?.completedModules?.length || 0}
+          <div className="lb-my-stats">
+            <div className="lb-my-stat">
+              <div className="lb-my-stat-val">#{myRank}</div>
+              <div className="lb-my-stat-label">Rank</div>
+            </div>
+            <div className="lb-my-stat">
+              <div className="lb-my-stat-val" style={{ color: "var(--accent-amber)" }}>{me.xp || 0}</div>
+              <div className="lb-my-stat-label">XP</div>
+            </div>
+            <div className="lb-my-stat">
+              <div className="lb-my-stat-val" style={{ color: "var(--accent-secondary)" }}>Lv.{me.level || 1}</div>
+              <div className="lb-my-stat-label">Level</div>
+            </div>
+            <div className="lb-my-stat">
+              <div className="lb-my-stat-val" style={{ color: "var(--accent-emerald)" }}>{(me.completedModules || []).length}</div>
+              <div className="lb-my-stat-label">Modules</div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Sort tabs */}
-      <div className="lb-sort">
-        <span className="lb-sort-label">Sort by:</span>
-        {[
-          { key: "xp", label: "⚡ XP" },
-          { key: "level", label: "🎯 Level" },
-          { key: "modules", label: "📚 Modules" },
-        ].map(s => (
-          <button key={s.key} className={`filter-btn ${sortBy === s.key ? "active" : ""}`} onClick={() => setSortBy(s.key)}>
-            {s.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Podium: Top 3 */}
+      {/* Top 3 Podium */}
       {sorted.length >= 3 && (
-        <div className="podium">
+        <div className="lb-podium">
           {[sorted[1], sorted[0], sorted[2]].map((u, i) => {
-            const ranks = [2, 1, 3];
-            const rank = ranks[i];
-            const medals = ["🥈", "🥇", "🥉"];
-            const heights = [160, 200, 140];
+            const rankNum = [2, 1, 3][i];
+            const colors  = ["#94a3b8", "#f59e0b", "#b45309"];
+            const bgs     = ["rgba(148,163,184,0.08)", "rgba(245,158,11,0.08)", "rgba(180,83,9,0.08)"];
+            const borders = ["rgba(148,163,184,0.2)",  "rgba(245,158,11,0.3)",  "rgba(180,83,9,0.2)"];
             return (
-              <div key={u.uid} className={`podium-slot rank-${rank}`} style={{ height: heights[i] }}>
-                <div className="podium-medal">{medals[i]}</div>
-                <div className="podium-avatar">{u.displayName?.[0]?.toUpperCase() || "?"}</div>
-                <div className="podium-name">{u.displayName?.split(" ")[0] || "User"}</div>
-                <div className="podium-xp">⚡ {u.xp || 0}</div>
+              <div key={u.uid} className={`podium-slot rank-${rankNum}`}
+                style={{ background: bgs[i], borderColor: borders[i], '--h': [180, 220, 160][i] + 'px' }}>
+                <div className="podium-rank-num" style={{ color: colors[i] }}>#{rankNum}</div>
+                <div className="podium-avatar" style={{ borderColor: colors[i] + "60" }}>
+                  {(u.displayName || "?")[0].toUpperCase()}
+                </div>
+                <div className="podium-name">{(u.displayName || "User").split(" ")[0]}</div>
+                <div className="podium-xp" style={{ color: colors[i] }}>
+                  <Zap size={11} /> {u.xp || 0} XP
+                </div>
               </div>
             );
           })}
         </div>
       )}
 
-      {/* Full Leaderboard */}
-      <div className="lb-table glass-card">
-        <div className="lb-table-header">
-          <div className="lb-col rank">Rank</div>
-          <div className="lb-col user">Learner</div>
-          <div className="lb-col xp">XP</div>
-          <div className="lb-col level">Level</div>
-          <div className="lb-col modules">Modules</div>
-          <div className="lb-col badges">Badges</div>
+      {/* Table */}
+      {loading ? (
+        <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
+          <div className="spinner" />
         </div>
-        {sorted.map((u, i) => {
-          const isMe = u.uid === user?.uid;
-          const earnedBadges = BADGES.filter(b => (u.badges || []).includes(b.id));
-          return (
-            <div key={u.uid} className={`lb-table-row ${isMe ? "lb-me-row" : ""}`}>
-              <div className="lb-col rank">
-                {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : <span className="rank-num">#{i + 1}</span>}
-              </div>
-              <div className="lb-col user">
-                <div className="lb-user-avatar">{u.displayName?.[0]?.toUpperCase() || "?"}</div>
-                <div>
-                  <div className="lb-user-name">{u.displayName || "Anonymous"} {isMe && <span className="you-tag">You</span>}</div>
-                  <div className="lb-user-streak">🔥 {u.streak || 0} day streak</div>
+      ) : (
+        <div className="lb-table card" style={{ padding: 0, overflow: "hidden" }}>
+          <div className="lb-table-head">
+            <div className="lb-col lc-rank">Rank</div>
+            <div className="lb-col lc-user">Learner</div>
+            <div className="lb-col lc-xp">XP</div>
+            <div className="lb-col lc-level">Level</div>
+            <div className="lb-col lc-mods">Modules</div>
+            <div className="lb-col lc-badges">Badges</div>
+          </div>
+          {sorted.map((u, i) => {
+            const isMe = u.uid === user?.uid;
+            const earnedBadges = BADGE_META.filter(b => (u.badges || []).includes(b.id));
+            const medals = ["#f59e0b", "#94a3b8", "#b45309"];
+            return (
+              <div key={u.uid} className={`lb-table-row ${isMe ? "lb-me" : ""}`}>
+                <div className="lb-col lc-rank">
+                  {i < 3
+                    ? <Trophy size={16} color={medals[i]} />
+                    : <span className="lb-rank-num">#{i + 1}</span>
+                  }
+                </div>
+                <div className="lb-col lc-user">
+                  <div className="lb-avatar">{(u.displayName || "?")[0].toUpperCase()}</div>
+                  <div className="lb-user-info">
+                    <span className="lb-user-name">
+                      {u.displayName || "Anonymous"}
+                      {isMe && <span className="lb-you-tag">You</span>}
+                    </span>
+                    <span className="lb-streak"><Flame size={11} /> {u.streak || 0} day streak</span>
+                  </div>
+                </div>
+                <div className="lb-col lc-xp">
+                  <span className="lb-xp-val"><Zap size={12} /> {u.xp || 0}</span>
+                </div>
+                <div className="lb-col lc-level">
+                  <span className="lb-level-pill">Lv.{u.level || 1}</span>
+                </div>
+                <div className="lb-col lc-mods" style={{ color: "var(--accent-emerald)", fontWeight: 600, fontFamily: "var(--font-mono)", fontSize: "0.875rem" }}>
+                  {(u.completedModules || []).length}
+                </div>
+                <div className="lb-col lc-badges">
+                  {earnedBadges.slice(0, 4).map(b => {
+                    const Icon = b.icon;
+                    return <Icon key={b.id} size={14} color={b.color} strokeWidth={2} title={b.label} />;
+                  })}
+                  {earnedBadges.length === 0 && <span style={{ color: "var(--text-disabled)", fontSize: "0.75rem" }}>—</span>}
                 </div>
               </div>
-              <div className="lb-col xp" style={{ color: "var(--accent-amber)", fontFamily: "var(--font-mono)", fontWeight: 700 }}>
-                ⚡ {u.xp || 0}
-              </div>
-              <div className="lb-col level">
-                <span className="level-pill">Lv.{u.level || 1}</span>
-              </div>
-              <div className="lb-col modules" style={{ color: "var(--accent-green)", fontWeight: 600 }}>
-                {u.completedModules?.length || 0}
-              </div>
-              <div className="lb-col badges">
-                {earnedBadges.map(b => (
-                  <span key={b.id} title={b.id} className="lb-badge-icon">{b.icon}</span>
-                ))}
-                {earnedBadges.length === 0 && <span style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>—</span>}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

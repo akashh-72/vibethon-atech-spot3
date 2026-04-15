@@ -33,6 +33,7 @@ export const loginUser = async (email, password) => {
 };
 
 export const logoutUser = () => signOut(auth);
+export const logout = logoutUser; // alias
 
 export const getUserProfile = async (uid) => {
   const snapshot = await get(ref(db, `users/${uid}`));
