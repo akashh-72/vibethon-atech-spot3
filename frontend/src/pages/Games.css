@@ -1,0 +1,221 @@
+.games-page { max-width: 900px; }
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.game-card {
+  padding: 28px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.game-card-icon { font-size: 3rem; }
+.game-card-title { font-size: 1.1rem; font-weight: 700; font-family: var(--font-display); }
+.game-card-desc { color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6; flex: 1; }
+.game-meta { display: flex; justify-content: center; }
+.game-play-btn { width: 100%; justify-content: center; margin-top: 8px; }
+
+/* ===== GAME RUNNER ===== */
+.game-runner { max-width: 1000px; }
+
+.game-runner-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.game-runner-header h2 {
+  flex: 1;
+  font-size: 1.3rem;
+}
+
+.game-score-badge {
+  padding: 6px 16px;
+  background: rgba(108,99,255,0.15);
+  border: 1px solid rgba(108,99,255,0.3);
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--accent-secondary);
+}
+
+.game-score-badge.green { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: var(--accent-green); }
+.game-score-badge.red   { background: rgba(239,68,68,0.1);  border-color: rgba(239,68,68,0.3);  color: var(--accent-red); }
+
+/* ===== DECISION TREE GAME ===== */
+.dt-game { padding: 28px; }
+
+.dt-animal-reveal { text-align: center; margin-bottom: 24px; }
+.dt-secret { font-size: 2rem; margin-bottom: 8px; }
+.dt-instructions { color: var(--text-secondary); font-size: 0.875rem; }
+
+.dt-path {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.dt-path-node {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: var(--bg-glass);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+}
+
+.dt-q { color: var(--text-secondary); }
+.dt-ans { font-weight: 700; }
+.dt-ans.yes { color: var(--accent-green); }
+.dt-ans.no  { color: var(--accent-red); }
+
+.dt-question-box { text-align: center; padding: 24px 0; }
+.dt-q-number { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; }
+.dt-q-text { font-size: 1.3rem; font-weight: 700; margin-bottom: 24px; }
+.dt-buttons { display: flex; gap: 16px; justify-content: center; }
+.dt-buttons .btn { min-width: 120px; justify-content: center; font-size: 1rem; }
+
+.dt-result {
+  text-align: center;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  margin-top: 16px;
+}
+
+.dt-result.success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); }
+.dt-result.fail    { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); }
+
+.dt-animal-name { font-size: 2rem; margin-bottom: 12px; }
+.dt-result-msg  { font-size: 1rem; color: var(--text-secondary); margin-bottom: 20px; }
+
+.game-concept-card { padding: 24px; margin-top: 20px; }
+.game-concept-card h3 { font-size: 1rem; margin-bottom: 12px; }
+.game-concept-card p  { color: var(--text-secondary); font-size: 0.875rem; line-height: 1.7; }
+.game-concept-card strong { color: var(--accent-secondary); }
+
+/* ===== NEURAL NETWORK GAME ===== */
+.nn-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  align-items: start;
+}
+
+.nn-canvas-card { padding: 24px; }
+.nn-canvas-card h3 { font-size: 1rem; margin-bottom: 16px; }
+
+.nn-canvas {
+  width: 100%;
+  max-width: 440px;
+  border-radius: var(--radius-md);
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+}
+
+.nn-controls { padding: 24px; }
+.nn-controls h3 { font-size: 1rem; margin-bottom: 20px; }
+.nn-controls-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+
+.nn-control-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.nn-val { color: var(--accent-secondary); font-family: var(--font-mono); }
+
+.nn-slider {
+  width: 100%;
+  height: 4px;
+  appearance: none;
+  background: var(--border);
+  border-radius: var(--radius-full);
+  outline: none;
+  cursor: pointer;
+  accent-color: var(--accent-primary);
+}
+
+.nn-math-box {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nn-formula {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--accent-secondary);
+}
+
+/* ===== CLASSIFY GAME ===== */
+.classify-game { padding: 32px; max-width: 600px; margin: 0 auto; }
+.classify-q { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; text-align: center; }
+
+.feature-display {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.feature-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 20px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  min-width: 90px;
+}
+
+.feature-key { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.feature-val { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
+
+.classify-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.classify-btn { justify-content: center; font-size: 0.875rem; }
+
+.classify-feedback {
+  text-align: center;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.classify-feedback.correct { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); }
+.classify-feedback.wrong   { background: rgba(239,68,68,0.08);  border: 1px solid rgba(239,68,68,0.2); }
+
+.classify-reveal    { font-size: 2.5rem; }
+.classify-result-msg { font-size: 1.1rem; font-weight: 600; }
+
+@media (max-width: 768px) {
+  .games-grid { grid-template-columns: 1fr; }
+  .nn-layout  { grid-template-columns: 1fr; }
+  .classify-options { grid-template-columns: repeat(2, 1fr); }
+}

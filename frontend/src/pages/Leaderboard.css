@@ -1,0 +1,152 @@
+.leaderboard-page { max-width: 1000px; }
+
+.my-rank-card {
+  display: flex;
+  gap: 24px;
+  padding: 24px 32px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.my-rank-inner { text-align: center; }
+.my-rank-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+.my-rank-num   { font-size: 1.8rem; font-weight: 800; font-family: var(--font-display); }
+
+.lb-sort {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.lb-sort-label { color: var(--text-muted); font-size: 0.85rem; }
+
+/* ===== PODIUM ===== */
+.podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 32px;
+}
+
+.podium-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 20px 32px 20px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  min-width: 140px;
+  transition: var(--transition);
+  position: relative;
+}
+
+.podium-slot:hover { transform: translateY(-4px); }
+
+.rank-1 { background: linear-gradient(180deg, rgba(245,158,11,0.2), rgba(245,158,11,0.05)); border-color: rgba(245,158,11,0.4); z-index: 2; }
+.rank-2 { background: linear-gradient(180deg, rgba(148,163,184,0.15), rgba(148,163,184,0.04)); border-color: rgba(148,163,184,0.3); }
+.rank-3 { background: linear-gradient(180deg, rgba(205,127,50,0.15), rgba(205,127,50,0.04)); border-color: rgba(205,127,50,0.3); }
+
+.podium-medal { font-size: 1.5rem; position: absolute; top: 12px; }
+.podium-avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.podium-name { font-size: 0.875rem; font-weight: 700; }
+.podium-xp   { font-size: 0.8rem; color: var(--accent-amber); font-family: var(--font-mono); }
+
+/* ===== TABLE ===== */
+.lb-table { overflow: hidden; }
+
+.lb-table-header, .lb-table-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 100px 80px 90px 100px;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+}
+
+.lb-table-header {
+  background: var(--bg-glass);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.lb-table-row {
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: var(--transition);
+}
+
+.lb-table-row:hover { background: var(--bg-glass); }
+
+.lb-me-row {
+  background: rgba(108,99,255,0.08) !important;
+  border-bottom: 1px solid rgba(108,99,255,0.2);
+}
+
+.lb-col.rank { text-align: center; font-size: 1.2rem; }
+.rank-num { font-size: 0.875rem; color: var(--text-muted); font-family: var(--font-mono); }
+
+.lb-col.user { display: flex; align-items: center; gap: 12px; }
+
+.lb-user-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.lb-user-name { font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.lb-user-streak { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+.you-tag {
+  padding: 1px 8px;
+  background: rgba(108,99,255,0.2);
+  border: 1px solid rgba(108,99,255,0.3);
+  border-radius: var(--radius-full);
+  font-size: 0.68rem;
+  color: var(--accent-secondary);
+  font-weight: 700;
+}
+
+.level-pill {
+  padding: 4px 10px;
+  background: rgba(108,99,255,0.12);
+  border: 1px solid rgba(108,99,255,0.25);
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-secondary);
+}
+
+.lb-col.badges { display: flex; gap: 4px; flex-wrap: wrap; }
+.lb-badge-icon { font-size: 1.1rem; }
+
+@media (max-width: 768px) {
+  .lb-table-header, .lb-table-row {
+    grid-template-columns: 50px 1fr 80px 70px;
+  }
+  .lb-col.modules, .lb-col.badges { display: none; }
+  .podium { gap: 4px; }
+  .podium-slot { min-width: 100px; padding: 20px 16px 20px; }
+}
