@@ -135,7 +135,70 @@
   color: var(--text-secondary);
 }
 
+.pg-mobile-tabs {
+  display: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.pg-mobile-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.pg-mobile-tab.active {
+  background: var(--bg-elevated);
+  color: var(--accent-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.pg-output-dot {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 6px;
+  height: 6px;
+  background: var(--accent-cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent-cyan);
+}
+
 @media (max-width: 1000px) {
-  .pg-layout { grid-template-columns: 1fr; }
+  .pg-layout { 
+    grid-template-columns: 1fr; 
+    gap: 0;
+  }
+  
+  .pg-mobile-tabs { display: grid; }
+  
+  .pg-view-editor .pg-output-panel { display: none; }
+  .pg-view-output .pg-editor-panel { display: none; }
+  
+  .pg-view-output .pg-output-body {
+    min-height: 400px;
+  }
+
   .pg-sample-tabs { display: none; }
+  .pg-filename { display: none; }
+  .pg-window-dots { display: none; }
+  
+  .pg-editor-header {
+    justify-content: flex-end;
+  }
 }

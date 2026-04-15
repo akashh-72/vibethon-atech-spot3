@@ -389,8 +389,29 @@
   letter-spacing: 0.05em;
 }
 
-.qr-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+@media (max-width: 768px) {
+  .quiz-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .quiz-question {
+    font-size: 1.125rem;
+    margin-bottom: 24px;
+  }
+  
+  .quiz-option {
+    padding: 14px 16px;
+  }
+
+  .qr-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 24px;
+  }
+  
+  .qr-stats {
+    grid-template-columns: 1fr;
+  }
 }

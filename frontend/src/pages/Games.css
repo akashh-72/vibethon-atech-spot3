@@ -290,3 +290,10 @@
   .nn-layout    { grid-template-columns: 1fr; }
   .cls-options  { grid-template-columns: repeat(2, 1fr); }
 }
+
+@media (max-width: 600px) {
+  .cls-options { grid-template-columns: 1fr; }
+  .dt-animal-header { flex-direction: column; align-items: flex-start; }
+  .dt-btn-row { flex-direction: column; }
+  .dt-btn-row .btn { width: 100%; }
+}

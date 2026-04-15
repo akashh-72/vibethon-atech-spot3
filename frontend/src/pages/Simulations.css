@@ -148,3 +148,10 @@
 @media (max-width: 900px) {
   .iris-main-grid { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 600px) {
+  .sim-info-header { flex-direction: column; }
+  .sim-info-icon { margin-bottom: 8px; }
+  .spam-row { gap: 8px; }
+  .spam-text { min-width: 100%; }
+}

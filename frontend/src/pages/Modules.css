@@ -156,3 +156,13 @@
   color: var(--accent-cyan);
   transform: translateX(2px);
 }
+
+@media (max-width: 768px) {
+  .modules-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .mod-card {
+    padding: 24px;
+  }
+}

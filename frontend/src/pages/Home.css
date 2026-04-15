@@ -1093,41 +1093,57 @@ a {
   color: #ffffff;
 }
 
-.home-mobile-toggle {
-  display: none;
-  background: none;
-  border: none;
-  color: #ffffff;
-  cursor: pointer;
-}
-
 /* ── Responsive ── */
 @media (max-width: 1024px) {
-  .ln-grid {
-    grid-template-columns: 1fr;
+  .home-hero {
+    padding: 80px 24px;
+    min-height: auto;
   }
 
-
-  .footer-top {
-    grid-template-columns: 1fr;
-    gap: 40px;
+  .home-hero-inner {
+    max-width: 100%;
   }
 
-  .home-nav-links {
-    display: none;
+  .home-hero-title {
+    font-size: clamp(2.5rem, 10vw, 4rem);
+    margin-bottom: 20px;
   }
 
-  .home-mobile-toggle {
-    display: block;
+  .home-hero-desc {
+    font-size: 18px;
+    margin-bottom: 40px;
+    padding: 0 10px;
   }
 
   .home-stats {
     flex-wrap: wrap;
-    gap: 24px;
+    gap: 32px;
+    margin-bottom: 60px;
+  }
+
+  .home-stat-icon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 12px;
+  }
+
+  .home-stat-value {
+    font-size: 28px;
+  }
+
+  .home-hero-panel {
+    padding: 32px 24px;
+    margin-top: 40px;
   }
 
   .home-hero-panel-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .ln-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .home-process-grid {
@@ -1136,38 +1152,24 @@ a {
 
   .home-why-layout {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 48px;
   }
 
   .home-testimonials-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-}
 
-@media (max-width: 768px) {
-  .home-hero-title {
-    font-size: 2.8rem;
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 48px;
   }
 
   .footer-links-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+}
 
-  .footer-bottom {
-    flex-direction: column;
-    gap: 20px;
-    text-align: center;
-  }
-
-  .footer-legal {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .footer-status {
-    justify-content: center;
-  }
-
+@media (max-width: 768px) {
   .home-hero-panel-grid {
     grid-template-columns: 1fr;
   }
@@ -1181,36 +1183,52 @@ a {
   }
 
   .home-stats {
-    justify-content: center;
-    text-align: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px 16px;
+  }
+
+  .home-stat-value {
+    font-size: 24px;
+  }
+
+  .home-stat-label {
+    font-size: 11px;
+  }
+
+  .footer-links-grid {
+    grid-template-columns: 1fr;
     gap: 32px;
   }
 
-  .home-stat {
-    align-items: center;
+  .home-trust-list {
+    gap: 24px 16px;
   }
 
-  .home-hero-title {
-    text-align: center;
-    font-size: 2.8rem;
+  .home-section-title {
+    font-size: 28px;
   }
 
-  .home-hero-desc {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+  .home-section-desc {
     font-size: 16px;
   }
 
-  .home-hero-actions {
-    display: flex;
-    justify-content: center;
-    width: 100%;
+  .home-cta-inner {
+    padding: 40px 24px;
+    border-radius: 24px;
   }
 
-  .home-hero {
-    align-items: center;
-    padding: 60px 20px;
-    text-align: center;
+  .home-cta-title {
+    font-size: 28px;
+  }
+
+  .home-cta-desc {
+    font-size: 15px;
+  }
+
+  .home-cta-btn {
+    width: 100%;
+    justify-content: center;
+    font-size: 16px;
   }
 }

@@ -371,6 +371,29 @@
   .db-grid-2 { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 600px) {
-  .stat-card-value { font-size: 1.4rem; }
+@media (max-width: 768px) {
+  .db-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .db-hero h1 {
+    font-size: 1.85rem;
+  }
+
+  .db-level-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .db-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stat-card-value {
+    font-size: 1.5rem;
+  }
 }

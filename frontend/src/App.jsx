@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useState } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Navbar from "./components/layout/Navbar";
 import Home from "./pages/Home";
@@ -19,8 +20,7 @@ import Community from "./pages/Community";
 import Blog from "./pages/Blog";
 import Docs from "./pages/Docs";
 import PublicLayout from "./components/layout/PublicLayout";
-
-
+import { Menu, Brain } from "lucide-react";
 
 import Chatbot from "./components/common/Chatbot";
 
@@ -38,10 +38,29 @@ function ProtectedRoute({ children }) {
   return user ? children : <Navigate to="/login" replace />;
 }
 
+function MobileHeader({ onMenuOpen }) {
+  return (
+    <header className="mobile-header">
+      <div className="mobile-header-logo">
+        <div className="mobile-logo-icon">
+          <Brain size={16} />
+        </div>
+        <span>LearNova</span>
+      </div>
+      <button className="mobile-menu-toggle" onClick={onMenuOpen}>
+        <Menu size={24} />
+      </button>
+    </header>
+  );
+}
+
 function AuthenticatedLayout({ children }) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <div className="page-layout">
-      <Navbar />
+      <MobileHeader onMenuOpen={() => setMobileMenuOpen(true)} />
+      <Navbar isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
       <main className="main-content">{children}</main>
     </div>
   );

@@ -180,10 +180,15 @@ export default function Playground() {
   const [output, setOutput] = useState("");
   const [running, setRunning] = useState(false);
   const [copied, setCopied]   = useState(false);
+  const [activeTab, setActiveTab] = useState("editor"); // 'editor' or 'output'
 
   const handleRun = () => {
     setRunning(true);
     setOutput("");
+    // Switch to output on mobile for immediate result view
+    if (window.innerWidth <= 1000) {
+      setActiveTab("output");
+    }
     setTimeout(() => {
       setOutput(runPseudoPython(code));
       setRunning(false);
@@ -224,7 +229,26 @@ export default function Playground() {
         </div>
       </div>
 
-      <div className="pg-layout">
+      {/* Mobile Tab Switcher */}
+      <div className="pg-mobile-tabs">
+        <button 
+          className={`pg-mobile-tab ${activeTab === "editor" ? "active" : ""}`}
+          onClick={() => setActiveTab("editor")}
+        >
+          <Code2 size={16} />
+          Editor
+        </button>
+        <button 
+          className={`pg-mobile-tab ${activeTab === "output" ? "active" : ""}`}
+          onClick={() => setActiveTab("output")}
+        >
+          <Terminal size={16} />
+          Output
+          {output && <span className="pg-output-dot" />}
+        </button>
+      </div>
+
+      <div className={`pg-layout pg-view-${activeTab}`}>
         {/* Editor */}
         <div className="pg-editor-panel card" style={{ padding: 0, overflow: "hidden" }}>
           <div className="pg-editor-header">
@@ -251,7 +275,7 @@ export default function Playground() {
             </div>
           </div>
           <Editor
-            height="460px"
+            height="calc(min(460px, 60vh))"
             defaultLanguage="python"
             value={code}
             onChange={(v) => setCode(v || "")}
@@ -268,6 +292,7 @@ export default function Playground() {
               letterSpacing: 0.3,
               lineHeight: 22,
               roundedSelection: true,
+              automaticLayout: true,
             }}
           />
         </div>

@@ -98,6 +98,7 @@
   --sidebar-width: 280px;
   --topbar-height: 72px;
   --content-max: 1300px;
+  --mobile-header-height: 64px;
 }
 
 /* ── RESET ──────────────────────────────────────────────────── */
@@ -184,12 +185,25 @@ ol {
   margin-left: var(--sidebar-width);
   min-height: 100vh;
   background: var(--bg-surface);
+  transition: margin-left var(--transition-base);
 }
 
 .page-wrapper {
   max-width: var(--content-max);
   margin: 0 auto;
   padding: var(--space-8) var(--space-8);
+}
+
+/* Responsive adjustments for layout */
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0;
+    padding-top: var(--mobile-header-height);
+  }
+  
+  .page-wrapper {
+    padding: var(--space-6) var(--space-4);
+  }
 }
 
 /* ── PAGE HEADER ─────────────────────────────────────────────── */

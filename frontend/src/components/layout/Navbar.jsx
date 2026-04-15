@@ -1,10 +1,12 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { logout } from "../../services/auth";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, BookOpen, Code2, Gamepad2,
   FlaskConical, Trophy, Zap, LogOut, Brain,
-  ChevronRight, User
+  ChevronRight, X
 } from "lucide-react";
 import "./Navbar.css";
 
@@ -18,9 +20,17 @@ const NAV_ITEMS = [
   { to: "/leaderboard",  icon: Trophy,          label: "Leaderboard" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ isOpen, onClose }) {
   const { user, userProfile } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Close sidebar on route change (mobile only)
+  useEffect(() => {
+    if (isOpen && window.innerWidth <= 1024) {
+      onClose();
+    }
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     await logout();
@@ -38,8 +48,18 @@ export default function Navbar() {
   const xpInLevel   = xp % 200;
   const xpToNextLevel = 200;
 
-  return (
-    <aside className="sidebar">
+  const sidebarVariants = {
+    open: { x: 0, opacity: 1, transition: { type: "spring", damping: 25, stiffness: 200 } },
+    closed: { x: "-100%", opacity: 0, transition: { type: "spring", damping: 25, stiffness: 200 } }
+  };
+
+  const SidebarContent = (
+    <aside className={`sidebar ${isOpen ? "sidebar--open" : ""}`}>
+      {/* Mobile Close Button */}
+      <button className="sidebar-mobile-close" onClick={onClose}>
+        <X size={20} />
+      </button>
+
       {/* Logo */}
       <div className="sidebar-logo">
         <div className="sidebar-logo-icon">
@@ -94,5 +114,38 @@ export default function Navbar() {
         </button>
       </div>
     </aside>
+  );
+
+  return (
+    <>
+      <AnimatePresence>
+        {/* Desktop Sidebar (Always visible) */}
+        <div className="sidebar-desktop">
+          {SidebarContent}
+        </div>
+
+        {/* Mobile Sidebar (Drawer) */}
+        {isOpen && (
+          <>
+            <motion.div
+              className="sidebar-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={onClose}
+            />
+            <motion.div
+              className="sidebar-mobile-container"
+              initial="closed"
+              animate="open"
+              exit="closed"
+              variants={sidebarVariants}
+            >
+              {SidebarContent}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
