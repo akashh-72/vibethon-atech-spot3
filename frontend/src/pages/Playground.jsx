@@ -1,5 +1,6 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import Editor from "@monaco-editor/react";
+import { Play, RotateCcw, Copy, CheckCheck, Terminal, Code2, ChevronDown } from "lucide-react";
 import "./Playground.css";
 
 const SAMPLES = [
@@ -7,19 +8,19 @@ const SAMPLES = [
     label: "Hello AI",
     code:
 "# Welcome to the LearNova Playground!\n" +
-"# Run AIML Python-style code here\n" +
+"# Run Python-style AIML code here\n" +
 "\n" +
 "def greet(name):\n" +
 '    return "Hello, " + name + "! Welcome to AI learning."\n' +
 "\n" +
 'message = greet("Learner")\n' +
 "print(message)\n" +
-'print("Lets explore Artificial Intelligence together!")\n',
+'print("Lets explore AI together!")\n',
   },
   {
     label: "Linear Regression",
     code:
-"# Simple Linear Regression Simulation\n" +
+"# Simple Linear Regression\n" +
 "# y = mx + b\n" +
 "\n" +
 "def predict(x, m=200, b=50000):\n" +
@@ -35,7 +36,7 @@ const SAMPLES = [
   {
     label: "KNN Classifier",
     code:
-"# K-Nearest Neighbors Concept\n" +
+"# K-Nearest Neighbors\n" +
 "def euclidean_distance(a, b):\n" +
 "    return abs(a - b)\n" +
 "\n" +
@@ -92,7 +93,7 @@ const SAMPLES = [
   {
     label: "Spam Detector",
     code:
-"# Simple Spam Detection using keywords\n" +
+"# Spam Detection\n" +
 "\n" +
 "SPAM_KEYWORDS = [\n" +
 '    "free", "win", "winner", "click here", "limited offer",\n' +
@@ -110,7 +111,7 @@ const SAMPLES = [
 '    "Congratulations! You win a free prize! Click here to claim now!",\n' +
 '    "Hey, are we still meeting for lunch tomorrow?",\n' +
 '    "URGENT: Free winner cash offer - limited offer only!",\n' +
-'    "Please find the attached project report for your review.",\n' +
+'    "Please find the attached project report for review.",\n' +
 "]\n" +
 "\n" +
 "for i, email in enumerate(emails):\n" +
@@ -122,28 +123,19 @@ const SAMPLES = [
   },
 ];
 
-// Pseudocode Python interpreter (browser-safe simulation)
 function runPseudoPython(code) {
   const lines = [];
-  const fakeScope = {
-    math: { exp: Math.exp },
-  };
+  const fakeScope = { math: { exp: Math.exp } };
 
-  // We execute via Function() as a safe JS-like environment
-  // Transform simple Python to JS
   let js = code
-    .replace(/^#.*$/gm, "")                         // strip comments
+    .replace(/^#.*$/gm, "")
     .replace(/def (\w+)\((.*?)\):/g, "function $1($2){")
     .replace(/elif /g, "else if ")
     .replace(/True/g, "true").replace(/False/g, "false").replace(/None/g, "null")
     .replace(/print\((.*?)\)/g, "__out__($1)")
-    .replace(/f"(.*?)"/g, (_, s) => {
-      return "`" + s.replace(/\{(.*?)\}/g, "${$1}") + "`";
-    })
     .replace(/range\((\d+),\s*(\d+)\)/g, "Array.from({length:$2-$1},(_,i)=>i+$1)")
     .replace(/range\((\d+)\)/g, "Array.from({length:$1},(_,i)=>i)")
     .replace(/for (\w+) in (.*?):/g, "for (let $1 of $2){")
-    .replace(/\.format\((.*?)\)/g, "")
     .replace(/import math/g, "")
     .replace(/\babs\b/g, "Math.abs")
     .replace(/\bmax\b\(([^,]+),\s*([^)]+)\)/g, "Math.max($1,$2)")
@@ -152,8 +144,6 @@ function runPseudoPython(code) {
     .replace(/\blen\b\((.*?)\)/g, "($1).length")
     .replace(/^\s{4}/gm, "");
 
-  // Fix block endings (Python indentation → JS braces)
-  // Simple approach: add } before de-indented lines
   const processedLines = js.split("\n");
   const result = [];
   const indentStack = [0];
@@ -179,25 +169,25 @@ function runPseudoPython(code) {
       Math
     );
   } catch (e) {
-    lines.push(`⚠️ Execution note: ${e.message}\n(Tip: This playground simulates Python syntax)`);
+    lines.push(`Error: ${e.message}`);
   }
   return lines.join("\n") || "(no output)";
 }
 
 export default function Playground() {
   const [selectedSample, setSelectedSample] = useState(0);
-  const [code, setCode] = useState(SAMPLES[0].code);
+  const [code, setCode]     = useState(SAMPLES[0].code);
   const [output, setOutput] = useState("");
   const [running, setRunning] = useState(false);
+  const [copied, setCopied]   = useState(false);
 
   const handleRun = () => {
     setRunning(true);
     setOutput("");
     setTimeout(() => {
-      const result = runPseudoPython(code);
-      setOutput(result);
+      setOutput(runPseudoPython(code));
       setRunning(false);
-    }, 400);
+    }, 500);
   };
 
   const handleSampleChange = (i) => {
@@ -206,94 +196,122 @@ export default function Playground() {
     setOutput("");
   };
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <div className="playground animate-fade-in">
+    <div className="page-wrapper animate-fade-in">
       <div className="page-header">
-        <h1 className="page-title">💻 Code Playground</h1>
-        <p className="page-subtitle">Write & run Python-style AIML code right in your browser</p>
+        <div className="page-header-row">
+          <div>
+            <h1 className="page-title">Code Playground</h1>
+            <p className="page-subtitle">Write and execute Python-style AI/ML code directly in your browser</p>
+          </div>
+          <div className="pg-sample-tabs">
+            {SAMPLES.map((s, i) => (
+              <button
+                key={s.label}
+                className={`filter-tab ${selectedSample === i ? "active" : ""}`}
+                onClick={() => handleSampleChange(i)}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* Sample selector */}
-      <div className="sample-tabs">
-        {SAMPLES.map((s, i) => (
-          <button
-            key={s.label}
-            className={`sample-tab ${selectedSample === i ? "active" : ""}`}
-            onClick={() => handleSampleChange(i)}
-          >
-            {s.label}
-          </button>
-        ))}
-      </div>
-
-      <div className="playground-layout">
+      <div className="pg-layout">
         {/* Editor */}
-        <div className="editor-panel glass-card">
-          <div className="editor-header">
-            <div className="editor-dots">
-              <span className="edot red" />
-              <span className="edot amber" />
-              <span className="edot green" />
+        <div className="pg-editor-panel card" style={{ padding: 0, overflow: "hidden" }}>
+          <div className="pg-editor-header">
+            <div className="pg-window-dots">
+              <div className="pg-dot pg-dot-red" />
+              <div className="pg-dot pg-dot-amber" />
+              <div className="pg-dot pg-dot-green" />
             </div>
-            <span className="editor-label">main.py</span>
-            <button className="btn btn-primary btn-sm run-btn" onClick={handleRun} disabled={running}>
-              {running ? "▶ Running..." : "▶ Run Code"}
-            </button>
+            <span className="pg-filename">
+              <Code2 size={13} />
+              main.py
+            </span>
+            <div className="pg-editor-actions">
+              <button className="btn btn-icon btn-icon-sm" onClick={handleCopy} title="Copy code">
+                {copied ? <CheckCheck size={14} color="var(--accent-emerald)" /> : <Copy size={14} />}
+              </button>
+              <button className="btn btn-icon btn-icon-sm" onClick={() => { setCode(""); setOutput(""); }} title="Clear">
+                <RotateCcw size={14} />
+              </button>
+              <button className="btn btn-primary btn-sm" onClick={handleRun} disabled={running}>
+                <Play size={13} fill="currentColor" />
+                {running ? "Running..." : "Run Code"}
+              </button>
+            </div>
           </div>
           <Editor
-            height="420px"
+            height="460px"
             defaultLanguage="python"
             value={code}
             onChange={(v) => setCode(v || "")}
             theme="vs-dark"
             options={{
-              fontSize: 14,
+              fontSize: 13.5,
               fontFamily: "'JetBrains Mono', monospace",
               minimap: { enabled: false },
               lineNumbers: "on",
               scrollBeyondLastLine: false,
               padding: { top: 16, bottom: 16 },
               renderLineHighlight: "line",
-              suggestOnTriggerCharacters: true,
+              cursorBlinking: "smooth",
+              letterSpacing: 0.3,
+              lineHeight: 22,
+              roundedSelection: true,
             }}
           />
         </div>
 
         {/* Output */}
-        <div className="output-panel glass-card">
-          <div className="output-header">
-            <span>📤 Output</span>
-            {output && (
-              <button className="btn btn-ghost btn-sm" onClick={() => setOutput("")}>Clear</button>
-            )}
-          </div>
-          <div className="output-content">
-            {running && (
-              <div className="output-running">
-                <div className="spinner" style={{ width: 24, height: 24 }} />
-                <span>Executing...</span>
+        <div className="pg-output-panel">
+          <div className="card" style={{ height: "100%", padding: 0, overflow: "hidden" }}>
+            <div className="pg-output-header">
+              <div className="pg-output-label">
+                <Terminal size={14} />
+                <span>Output</span>
               </div>
-            )}
-            {!running && output && (
-              <pre className="output-text">{output}</pre>
-            )}
-            {!running && !output && (
-              <div className="output-placeholder">
-                <span>🚀</span>
-                <p>Hit <strong>Run Code</strong> to see the output here</p>
-              </div>
-            )}
+              {output && (
+                <button className="btn btn-ghost btn-sm" onClick={() => setOutput("")}>
+                  Clear
+                </button>
+              )}
+            </div>
+            <div className="pg-output-body">
+              {running && (
+                <div className="pg-running">
+                  <div className="spinner" style={{ width: 20, height: 20 }} />
+                  <span>Executing...</span>
+                </div>
+              )}
+              {!running && output && <pre className="pg-output-text">{output}</pre>}
+              {!running && !output && (
+                <div className="pg-output-empty">
+                  <Play size={20} className="pg-play-hint" />
+                  <p>Press <strong>Run Code</strong> to see output</p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Tips */}
-          <div className="playground-tips">
-            <div className="tip-title">💡 Playground Tips</div>
-            <ul className="tip-list">
-              <li>Use <code>print()</code> to display output</li>
-              <li>Select samples above to load AIML examples</li>
-              <li>Supports basic Python syntax for learning</li>
-              <li>Practice Decision Trees, KNN, and Neural Nets</li>
-            </ul>
+          <div className="pg-tips card card-sm">
+            <div className="pg-tips-title">Quick Reference</div>
+            <div className="pg-tips-list">
+              <div className="pg-tip"><code>print()</code> — display values</div>
+              <div className="pg-tip"><code>for x in list:</code> — iteration</div>
+              <div className="pg-tip"><code>def fn(args):</code> — functions</div>
+              <div className="pg-tip"><code>import math</code> — math library</div>
+            </div>
           </div>
         </div>
       </div>

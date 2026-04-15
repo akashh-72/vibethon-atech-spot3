@@ -1,214 +1,244 @@
-import { useState } from "react";
-import { modules } from "../data/modules";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { quizData } from "../data/quizData";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { modules } from "../data/modules";
 import { useAuth } from "../context/AuthContext";
-import { ref, update, get } from "firebase/database";
+import { ref, update } from "firebase/database";
 import { db } from "../services/firebase";
+import {
+  ChevronLeft, ChevronRight, CheckCircle, XCircle,
+  Trophy, RotateCcw, BookOpen, Zap, Target
+} from "lucide-react";
 import "./Quiz.css";
 
 export default function Quiz() {
   const { moduleId } = useParams();
   const navigate = useNavigate();
-  const { user, profile, refreshProfile } = useAuth();
+  const { user, userProfile } = useAuth();
 
-  // If no moduleId, show module selector
-  if (!moduleId) return <QuizSelector />;
+  const [selectedModule, setSelectedModule] = useState(moduleId || null);
+  const [qIdx, setQIdx]           = useState(0);
+  const [selected, setSelected]   = useState(null);
+  const [answered, setAnswered]   = useState(false);
+  const [answers, setAnswers]     = useState([]);
+  const [finished, setFinished]   = useState(false);
+  const [saving, setSaving]       = useState(false);
 
-  const module = modules.find(m => m.id === moduleId);
-  const questions = quizData[moduleId];
+  const quiz = selectedModule ? quizData[selectedModule] : null;
 
-  if (!module || !questions) {
-    return (
-      <div className="quiz-page">
-        <p style={{ color: "var(--text-secondary)" }}>No quiz found for this module.</p>
-        <Link to="/quiz" className="btn btn-primary" style={{ marginTop: 16 }}>← Back to Quizzes</Link>
-      </div>
-    );
-  }
+  const handleSelect = (m) => setSelectedModule(m);
 
-  return <QuizRunner module={module} questions={questions} user={user} profile={profile} refreshProfile={refreshProfile} />;
-}
-
-function QuizSelector() {
-  return (
-    <div className="quiz-page animate-fade-in">
-      <div className="page-header">
-        <h1 className="page-title">🧪 Quizzes & Assessments</h1>
-        <p className="page-subtitle">Test your AIML knowledge with instant feedback</p>
-      </div>
-      <div className="quiz-selector-grid">
-        {modules.map((m, i) => (
-          <Link to={`/quiz/${m.id}`} key={m.id} className={`quiz-module-card glass-card animate-fade-in-up delay-${(i % 4) + 1}`}>
-            <div className="qm-icon">{m.icon}</div>
-            <div className="qm-info">
-              <div className="qm-title">{m.title}</div>
-              <div className="qm-meta">{quizData[m.id]?.length || 0} questions · {m.level}</div>
-            </div>
-            <div className="qm-arrow">→</div>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function QuizRunner({ module, questions, user, profile, refreshProfile }) {
-  const [current, setCurrent] = useState(0);
-  const [selected, setSelected] = useState(null);
-  const [answered, setAnswered] = useState(false);
-  const [score, setScore] = useState(0);
-  const [answers, setAnswers] = useState([]);
-  const [finished, setFinished] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const navigate = useNavigate();
-
-  const q = questions[current];
-  const progress = ((current + 1) / questions.length) * 100;
-
-  const handleSelect = (idx) => {
+  const handleAnswer = (opt) => {
     if (answered) return;
-    setSelected(idx);
+    setSelected(opt);
     setAnswered(true);
-    const isCorrect = idx === q.answer;
-    if (isCorrect) setScore(s => s + 1);
-    setAnswers(prev => [...prev, { questionId: q.id, correct: isCorrect, selected: idx }]);
+    setAnswers(prev => [...prev, { q: qIdx, chosen: opt, correct: quiz[qIdx].answer }]);
   };
 
   const handleNext = () => {
-    if (current < questions.length - 1) {
-      setCurrent(c => c + 1);
+    if (qIdx < quiz.length - 1) {
+      setQIdx(q => q + 1);
       setSelected(null);
       setAnswered(false);
     } else {
-      handleFinish();
+      setFinished(true);
+      saveScore();
     }
   };
 
-  const handleFinish = async () => {
-    setFinished(true);
+  const saveScore = async () => {
     if (!user) return;
+    const correct = answers.filter(a => a.chosen === a.correct).length + (selected === quiz[qIdx].answer ? 1 : 0);
+    const total = quiz.length;
+    const score = Math.round((correct / total) * 100);
+    const xpGain = Math.round(score * 0.5);
     setSaving(true);
     try {
-      const scorePercent = Math.round((score / questions.length) * 100);
-      const xpGained = Math.round(scorePercent * 0.5);
-      const prevScores = profile?.quizScores || {};
-      const newScores = { ...prevScores, [module.id]: scorePercent };
-      const newXp = (profile?.xp || 0) + xpGained;
-      const newLevel = Math.floor(newXp / 200) + 1;
-      const newBadges = [...(profile?.badges || [])];
-      if (!newBadges.includes("quiz-master") && scorePercent === 100) newBadges.push("quiz-master");
-
+      const prevScores = userProfile?.quizScores || {};
+      const prevXP = userProfile?.xp || 0;
+      const newXP = prevXP + xpGain;
       await update(ref(db, `users/${user.uid}`), {
-        quizScores: newScores,
-        xp: newXp,
-        level: newLevel,
-        badges: newBadges,
+        [`quizScores/${selectedModule}`]: score,
+        xp: newXP,
+        level: Math.floor(newXP / 200) + 1,
       });
-      await refreshProfile();
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setSaving(false);
-    }
+    } catch (e) {}
+    setSaving(false);
   };
 
-  if (finished) {
-    const pct = Math.round((score / questions.length) * 100);
-    const grade = pct >= 80 ? "🌟 Excellent!" : pct >= 60 ? "👍 Good Job!" : "📚 Keep Practicing!";
+  const correct = answers.filter(a => a.chosen === a.correct).length;
+  const scorePercent = quiz ? Math.round((correct / quiz.length) * 100) : 0;
+
+  // Module selector
+  if (!selectedModule) {
     return (
-      <div className="quiz-page animate-fade-in">
-        <div className="quiz-result-card glass-card">
-          <div className="result-icon">{pct >= 80 ? "🏆" : pct >= 60 ? "🎉" : "💪"}</div>
-          <h2 className="result-title">{grade}</h2>
-          <div className="result-score">
-            <span className="score-big gradient-text">{pct}%</span>
-            <span className="score-detail">{score} / {questions.length} correct</span>
-          </div>
-          <div className="result-xp">+{Math.round(pct * 0.5)} XP earned</div>
-          <div className="answer-review">
-            {questions.map((q, i) => (
-              <div key={q.id} className={`answer-item ${answers[i]?.correct ? "correct" : "wrong"}`}>
-                <div className="answer-status">{answers[i]?.correct ? "✅" : "❌"}</div>
-                <div>
-                  <div className="answer-q">{q.question}</div>
-                  {!answers[i]?.correct && (
-                    <div className="answer-explanation">💡 {q.explanation}</div>
-                  )}
+      <div className="page-wrapper animate-fade-in">
+        <div className="page-header">
+          <h1 className="page-title">Quizzes</h1>
+          <p className="page-subtitle">Test your knowledge after completing each module</p>
+        </div>
+        <div className="quiz-select-grid">
+          {modules.map(m => {
+            const prevScore = userProfile?.quizScores?.[m.id];
+            return (
+              <button key={m.id} className="quiz-pick-card" onClick={() => handleSelect(m.id)}>
+                <div className="quiz-pick-icon">
+                  <Target size={20} strokeWidth={1.75} />
                 </div>
+                <div className="quiz-pick-body">
+                  <h3 className="quiz-pick-title">{m.title}</h3>
+                  <p className="quiz-pick-meta">{m.level} · {quizData[m.id]?.length || 0} questions</p>
+                </div>
+                <div className="quiz-pick-right">
+                  {prevScore !== undefined && (
+                    <span className={`badge ${prevScore >= 80 ? "badge-emerald" : prevScore >= 50 ? "badge-amber" : "badge-rose"}`}>
+                      {prevScore}%
+                    </span>
+                  )}
+                  <ChevronRight size={16} className="quiz-pick-arrow" />
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // Results
+  if (finished) {
+    const letter = scorePercent >= 80 ? "A" : scorePercent >= 60 ? "B" : scorePercent >= 40 ? "C" : "D";
+    const modName = modules.find(m => m.id === selectedModule)?.title;
+    return (
+      <div className="page-wrapper animate-fade-in">
+        <div className="quiz-result-card card card-lg">
+          <div className="qr-header">
+            <div className={`qr-score-ring ${scorePercent >= 60 ? "pass" : "fail"}`}>
+              <svg viewBox="0 0 80 80" className="qr-ring-svg">
+                <circle cx="40" cy="40" r="34" className="qr-ring-bg" />
+                <circle cx="40" cy="40" r="34" className="qr-ring-fill"
+                  strokeDasharray={`${2 * Math.PI * 34}`}
+                  strokeDashoffset={`${2 * Math.PI * 34 * (1 - scorePercent / 100)}`}
+                />
+              </svg>
+              <div className="qr-score-center">
+                <span className="qr-score-pct">{scorePercent}%</span>
+                <span className="qr-score-grade">{letter}</span>
               </div>
-            ))}
+            </div>
+            <div className="qr-meta">
+              <h2 className="qr-title">{scorePercent >= 60 ? "Quiz Passed!" : "Keep Practicing"}</h2>
+              <p className="qr-subtitle">{modName}</p>
+            </div>
           </div>
-          <div className="result-actions">
-            <button className="btn btn-secondary" onClick={() => navigate("/quiz")}>← All Quizzes</button>
-            <button className="btn btn-primary" onClick={() => { setCurrent(0); setScore(0); setAnswers([]); setSelected(null); setAnswered(false); setFinished(false); }}>
-              🔄 Retry
+
+          <div className="qr-stats">
+            <div className="qr-stat">
+              <CheckCircle size={18} color="var(--accent-emerald)" />
+              <div>
+                <div className="qr-stat-val">{correct}</div>
+                <div className="qr-stat-label">Correct</div>
+              </div>
+            </div>
+            <div className="qr-stat">
+              <XCircle size={18} color="var(--accent-rose)" />
+              <div>
+                <div className="qr-stat-val">{quiz.length - correct}</div>
+                <div className="qr-stat-label">Wrong</div>
+              </div>
+            </div>
+            <div className="qr-stat">
+              <Zap size={18} color="var(--accent-amber)" />
+              <div>
+                <div className="qr-stat-val">+{Math.round(scorePercent * 0.5)}</div>
+                <div className="qr-stat-label">XP Earned</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="qr-actions">
+            <button className="btn btn-secondary" onClick={() => { setQIdx(0); setAnswers([]); setSelected(null); setAnswered(false); setFinished(false); }}>
+              <RotateCcw size={15} /> Retry
             </button>
+            <Link to={`/modules/${selectedModule}`} className="btn btn-ghost">
+              <BookOpen size={15} /> Review Module
+            </Link>
+            <Link to="/leaderboard" className="btn btn-primary">
+              <Trophy size={15} /> Leaderboard
+            </Link>
           </div>
         </div>
       </div>
     );
   }
 
+  // Active quiz
+  const question = quiz[qIdx];
+  const isCorrect = selected === question.answer;
+
   return (
-    <div className="quiz-page animate-fade-in">
-      <div className="quiz-breadcrumb">
-        <Link to="/quiz" className="breadcrumb-link">🧪 Quizzes</Link>
-        <span className="breadcrumb-sep">›</span>
-        <span>{module.title}</span>
-      </div>
-      <div className="quiz-card glass-card">
-        {/* Header */}
-        <div className="quiz-header">
-          <div className="quiz-module-info">
-            <span>{module.icon}</span>
-            <span>{module.title}</span>
+    <div className="page-wrapper animate-fade-in">
+      {/* Header */}
+      <div className="quiz-header">
+        <button className="btn btn-ghost btn-sm" onClick={() => setSelectedModule(null)}>
+          <ChevronLeft size={15} /> Quizzes
+        </button>
+        <div className="quiz-progress-info">
+          <span className="quiz-q-count">{qIdx + 1} / {quiz.length}</span>
+          <div className="quiz-progress-track">
+            <div className="quiz-progress-fill" style={{ width: `${((qIdx) / quiz.length) * 100}%` }} />
           </div>
-          <div className="quiz-count">Question {current + 1} of {questions.length}</div>
         </div>
+      </div>
 
-        {/* Progress */}
-        <div className="progress-bar-container" style={{ marginBottom: 28 }}>
-          <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
-        </div>
-
+      <div className="quiz-card card">
         {/* Question */}
-        <h2 className="quiz-question">{q.question}</h2>
+        <div className="quiz-q-header">
+          <span className="quiz-q-label">Question {qIdx + 1}</span>
+          <h2 className="quiz-question">{question.question}</h2>
+        </div>
 
         {/* Options */}
         <div className="quiz-options">
-          {q.options.map((opt, idx) => {
+          {question.options.map((opt, i) => {
             let cls = "quiz-option";
             if (answered) {
-              if (idx === q.answer) cls += " correct";
-              else if (idx === selected) cls += " wrong";
-            } else if (idx === selected) cls += " selected";
+              if (opt === question.answer) cls += " correct";
+              else if (opt === selected && opt !== question.answer) cls += " wrong";
+              else cls += " dimmed";
+            }
             return (
-              <button key={idx} className={cls} onClick={() => handleSelect(idx)}>
-                <span className="option-letter">{String.fromCharCode(65 + idx)}</span>
-                <span>{opt}</span>
+              <button key={i} className={cls} onClick={() => handleAnswer(opt)} disabled={answered}>
+                <div className="quiz-opt-marker">
+                  {answered && opt === question.answer ? <CheckCircle size={16} /> :
+                   answered && opt === selected ? <XCircle size={16} /> :
+                   <span>{String.fromCharCode(65 + i)}</span>}
+                </div>
+                <span className="quiz-opt-text">{opt}</span>
               </button>
             );
           })}
         </div>
 
         {/* Explanation */}
-        {answered && (
-          <div className={`quiz-explanation ${selected === q.answer ? "exp-correct" : "exp-wrong"}`}>
-            <span>{selected === q.answer ? "✅ Correct! " : "❌ Incorrect. "}</span>
-            {q.explanation}
+        {answered && question.explanation && (
+          <div className={`quiz-explanation ${isCorrect ? "correct" : "wrong"}`}>
+            <div className="quiz-exp-label">
+              {isCorrect ? <CheckCircle size={14} /> : <XCircle size={14} />}
+              <span>{isCorrect ? "Correct!" : "Not quite"}</span>
+            </div>
+            <p>{question.explanation}</p>
           </div>
         )}
 
-        {/* Footer */}
-        <div className="quiz-footer">
-          <div className="quiz-score-live">Score: {score}/{current + (answered ? 1 : 0)}</div>
-          {answered && (
+        {/* Nav */}
+        {answered && (
+          <div className="quiz-nav">
             <button className="btn btn-primary" onClick={handleNext}>
-              {current < questions.length - 1 ? "Next Question →" : "See Results 🏁"}
+              {qIdx < quiz.length - 1 ? <><span>Next Question</span><ChevronRight size={15} /></> : <><span>See Results</span><Trophy size={15} /></>}
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

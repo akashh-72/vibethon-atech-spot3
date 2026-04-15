@@ -4,159 +4,191 @@ import { modules } from "../data/modules";
 import { useAuth } from "../context/AuthContext";
 import { ref, update } from "firebase/database";
 import { db } from "../services/firebase";
+import {
+  ChevronLeft, ChevronRight, CheckCircle, BookOpen,
+  Code2, Zap, ArrowRight, List
+} from "lucide-react";
 import "./ModuleDetail.css";
 
 export default function ModuleDetail() {
   const { moduleId } = useParams();
   const navigate = useNavigate();
-  const { user, profile, refreshProfile } = useAuth();
-  const [activeLesson, setActiveLesson] = useState(0);
+  const { user, userProfile, refreshProfile } = useAuth();
+  const [lessonIdx, setLessonIdx] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const module = modules.find((m) => m.id === moduleId);
+  const module = modules.find(m => m.id === moduleId);
 
   useEffect(() => {
     if (!module) navigate("/modules");
-    if (profile?.completedModules?.includes(moduleId)) setCompleted(true);
-  }, [moduleId, profile]);
+    setLessonIdx(0);
+    setCompleted(false);
+  }, [moduleId]);
+
+  useEffect(() => {
+    if (userProfile?.completedModules?.includes(moduleId)) setCompleted(true);
+  }, [userProfile, moduleId]);
+
+  if (!module) return null;
+
+  const lesson = module.lessons[lessonIdx];
+  const isFirst = lessonIdx === 0;
+  const isLast = lessonIdx === module.lessons.length - 1;
 
   const handleComplete = async () => {
     if (!user || completed) return;
-    const prev = profile?.completedModules || [];
-    const newCompleted = [...new Set([...prev, moduleId])];
-    const newXp = (profile?.xp || 0) + module.xp;
-    const newLevel = Math.floor(newXp / 200) + 1;
-    const newBadges = [...(profile?.badges || [])];
-    if (newXp >= 100 && !newBadges.includes("beginner")) newBadges.push("beginner");
-    if (newXp >= 300 && !newBadges.includes("intermediate")) newBadges.push("intermediate");
-    if (newXp >= 600 && !newBadges.includes("advanced")) newBadges.push("advanced");
-
-    await update(ref(db, `users/${user.uid}`), {
-      completedModules: newCompleted,
-      xp: newXp,
-      level: newLevel,
-      badges: newBadges,
-    });
-    await refreshProfile();
-    setCompleted(true);
+    setSaving(true);
+    try {
+      const prev = userProfile?.completedModules || [];
+      if (!prev.includes(moduleId)) {
+        const newMods = [...prev, moduleId];
+        const newXP = (userProfile?.xp || 0) + module.xp;
+        const newLevel = Math.floor(newXP / 200) + 1;
+        await update(ref(db, `users/${user.uid}`), {
+          completedModules: newMods,
+          xp: newXP,
+          level: newLevel,
+        });
+        if (refreshProfile) await refreshProfile();
+        setCompleted(true);
+      }
+    } catch (e) {}
+    setSaving(false);
   };
 
-  if (!module) return null;
-  const lesson = module.lessons[activeLesson];
-
   return (
-    <div className="module-detail animate-fade-in">
-      {/* Breadcrumb */}
-      <div className="breadcrumb">
-        <Link to="/modules" className="breadcrumb-link">📚 Modules</Link>
-        <span className="breadcrumb-sep">›</span>
-        <span>{module.title}</span>
+    <div className="md-page page-wrapper animate-fade-in">
+      {/* Top nav */}
+      <div className="md-topnav">
+        <Link to="/modules" className="btn btn-ghost btn-sm">
+          <ChevronLeft size={15} /> Back to Modules
+        </Link>
+        <div className="md-breadcrumb">
+          <span className="md-breadcrumb-module">{module.title}</span>
+          <ChevronRight size={14} className="md-breadcrumb-sep" />
+          <span className="md-breadcrumb-lesson">{lesson.title}</span>
+        </div>
       </div>
 
-      <div className="module-detail-layout">
-        {/* Sidebar - Lessons */}
-        <aside className="lessons-sidebar glass-card">
-          <div className="lessons-header">
-            <div className="lessons-module-icon">{module.icon}</div>
+      <div className="md-layout">
+        {/* Sidebar */}
+        <aside className="md-sidebar">
+          <div className="md-sidebar-header">
+            <div className="md-sidebar-icon">
+              <BookOpen size={16} strokeWidth={2} />
+            </div>
             <div>
-              <div className="lessons-module-title">{module.title}</div>
-              <div className="lessons-module-meta">{module.lessons.length} lessons · {module.xp} XP</div>
+              <div className="md-sidebar-module">{module.title}</div>
+              <div className="md-sidebar-meta">
+                {module.lessons.length} lessons · <span style={{ color: "var(--accent-amber)" }}>{module.xp} XP</span>
+              </div>
             </div>
           </div>
-          <ul className="lessons-list">
+
+          <div className="md-sidebar-lessons">
             {module.lessons.map((l, i) => (
-              <li key={l.id}>
-                <button
-                  className={`lesson-btn ${activeLesson === i ? "active" : ""}`}
-                  onClick={() => setActiveLesson(i)}
-                >
-                  <span className="lesson-num">{i + 1}</span>
-                  <span>{l.title}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-          {completed ? (
-            <div className="completed-badge-full">✅ Module Completed! +{module.xp} XP</div>
-          ) : (
-            activeLesson === module.lessons.length - 1 && (
-              <button className="btn btn-primary complete-btn" onClick={handleComplete}>
-                🏁 Complete Module
+              <button
+                key={l.id}
+                className={`md-lesson-btn ${i === lessonIdx ? "active" : ""} ${i < lessonIdx ? "done" : ""}`}
+                onClick={() => setLessonIdx(i)}
+              >
+                <div className="md-lesson-num">
+                  {i < lessonIdx ? <CheckCircle size={14} /> : <span>{i + 1}</span>}
+                </div>
+                <span className="md-lesson-title">{l.title}</span>
               </button>
-            )
+            ))}
+          </div>
+
+          {completed ? (
+            <div className="md-completed-badge">
+              <CheckCircle size={16} />
+              <span>Module Completed</span>
+            </div>
+          ) : (
+            <button className="btn btn-primary md-take-quiz" onClick={() => navigate(`/quiz/${moduleId}`)}>
+              Take Quiz <ArrowRight size={15} />
+            </button>
           )}
         </aside>
 
-        {/* Content */}
-        <div className="lesson-content glass-card">
-          <h2 className="lesson-title">{lesson.title}</h2>
-          <div className="lesson-body">
-            <div className="lesson-text">
-              {lesson.content.split("\n\n").map((para, i) => {
-                if (para.startsWith("**") || para.includes("**")) {
-                  return (
-                    <p key={i} className="para"
-                      dangerouslySetInnerHTML={{
-                        __html: para.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>"),
-                      }}
-                    />
-                  );
-                }
-                return <p key={i} className="para">{para}</p>;
-              })}
+        {/* Main content */}
+        <main className="md-content">
+          <div className="md-lesson-header">
+            <span className="md-lesson-number">Lesson {lessonIdx + 1} of {module.lessons.length}</span>
+            <h2 className="md-lesson-title-main">{lesson.title}</h2>
+          </div>
+
+          {/* Content */}
+          <div className="md-lesson-body card">
+            <div className="md-content-section">
+              <div className="md-content-label">
+                <BookOpen size={13} />
+                <span>Lesson Content</span>
+              </div>
+              <div className="md-prose">
+                {lesson.content.split("\n").map((line, i) => {
+                  if (line.startsWith("**") && line.endsWith("**")) {
+                    return <h4 key={i} className="md-prose-h4">{line.replace(/\*\*/g, "")}</h4>;
+                  }
+                  if (line.startsWith("- **")) {
+                    const [bold, rest] = line.slice(4).split("** –");
+                    return (
+                      <div key={i} className="md-prose-point">
+                        <div className="md-bullet" />
+                        <p><strong>{bold}</strong>{rest ? ` — ${rest}` : ""}</p>
+                      </div>
+                    );
+                  }
+                  if (line.match(/^\d+\./)) {
+                    return <div key={i} className="md-prose-step"><span className="md-step-num">{line[0]}</span><p>{line.slice(3)}</p></div>;
+                  }
+                  if (line.trim() === "") return <div key={i} className="md-spacer" />;
+                  return <p key={i} className="md-prose-p">{line}</p>;
+                })}
+              </div>
             </div>
 
+            {/* Code example */}
             {lesson.example && (
-              <div className="code-block-wrapper">
-                <div className="code-block-header">
-                  <span>💻 Code Example</span>
-                  <button
-                    className="btn btn-ghost btn-sm"
-                    onClick={() => {
-                      navigator.clipboard.writeText(lesson.example);
-                    }}
-                  >
-                    Copy
-                  </button>
+              <div className="md-content-section">
+                <div className="md-content-label">
+                  <Code2 size={13} />
+                  <span>Code Example</span>
                 </div>
-                <pre className="code-block"><code>{lesson.example}</code></pre>
+                <div className="code-block">
+                  <pre>{lesson.example}</pre>
+                </div>
               </div>
             )}
           </div>
 
-          {/* Navigation */}
-          <div className="lesson-nav">
+          {/* Nav buttons */}
+          <div className="md-nav-btns">
             <button
               className="btn btn-secondary"
-              disabled={activeLesson === 0}
-              onClick={() => setActiveLesson(activeLesson - 1)}
+              disabled={isFirst}
+              onClick={() => setLessonIdx(i => i - 1)}
             >
-              ← Previous
+              <ChevronLeft size={16} /> Previous
             </button>
-            <div className="lesson-progress-dots">
-              {module.lessons.map((_, i) => (
-                <button
-                  key={i}
-                  className={`dot ${activeLesson === i ? "active" : ""}`}
-                  onClick={() => setActiveLesson(i)}
-                />
-              ))}
-            </div>
-            <button
-              className="btn btn-primary"
-              disabled={activeLesson === module.lessons.length - 1}
-              onClick={() => setActiveLesson(activeLesson + 1)}
-            >
-              Next →
-            </button>
-          </div>
 
-          {/* Quiz link */}
-          <div className="quiz-prompt">
-            <span>📝 Ready to test your knowledge?</span>
-            <Link to={`/quiz/${module.id}`} className="btn btn-secondary btn-sm">Take Quiz</Link>
+            {isLast ? (
+              <button
+                className="btn btn-primary"
+                onClick={handleComplete}
+                disabled={saving || completed}
+              >
+                {saving ? "Saving..." : completed ? <><CheckCircle size={16} /> Completed</> : <><Zap size={16} /> Complete & Earn {module.xp} XP</>}
+              </button>
+            ) : (
+              <button className="btn btn-primary" onClick={() => setLessonIdx(i => i + 1)}>
+                Next Lesson <ChevronRight size={16} />
+              </button>
+            )}
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

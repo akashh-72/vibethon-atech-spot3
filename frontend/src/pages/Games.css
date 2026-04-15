@@ -1,221 +1,292 @@
-.games-page { max-width: 900px; }
-
+/* Game card grid */
 .games-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 16px;
 }
 
 .game-card {
-  padding: 28px;
-  text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  padding: 24px;
 }
 
-.game-card-icon { font-size: 3rem; }
-.game-card-title { font-size: 1.1rem; font-weight: 700; font-family: var(--font-display); }
-.game-card-desc { color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6; flex: 1; }
-.game-meta { display: flex; justify-content: center; }
-.game-play-btn { width: 100%; justify-content: center; margin-top: 8px; }
-
-/* ===== GAME RUNNER ===== */
-.game-runner { max-width: 1000px; }
-
-.game-runner-header {
+.game-card-icon {
+  width: 56px; height: 56px;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
+  justify-content: center;
 }
 
-.game-runner-header h2 {
-  flex: 1;
-  font-size: 1.3rem;
-}
+.game-card-body { flex: 1; }
+.game-card-level { margin-bottom: 10px; }
 
-.game-score-badge {
-  padding: 6px 16px;
-  background: rgba(108,99,255,0.15);
-  border: 1px solid rgba(108,99,255,0.3);
-  border-radius: var(--radius-full);
-  font-size: 0.875rem;
+.game-card-title {
+  font-size: 1rem;
   font-weight: 700;
-  font-family: var(--font-mono);
-  color: var(--accent-secondary);
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  letter-spacing: -0.015em;
 }
 
-.game-score-badge.green { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: var(--accent-green); }
-.game-score-badge.red   { background: rgba(239,68,68,0.1);  border-color: rgba(239,68,68,0.3);  color: var(--accent-red); }
-
-/* ===== DECISION TREE GAME ===== */
-.dt-game { padding: 28px; }
-
-.dt-animal-reveal { text-align: center; margin-bottom: 24px; }
-.dt-secret { font-size: 2rem; margin-bottom: 8px; }
-.dt-instructions { color: var(--text-secondary); font-size: 0.875rem; }
-
-.dt-path {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 24px;
+.game-card-desc {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.65;
 }
 
-.dt-path-node {
+.game-card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 16px;
-  background: var(--bg-glass);
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--accent-secondary);
 }
 
-.dt-q { color: var(--text-secondary); }
-.dt-ans { font-weight: 700; }
-.dt-ans.yes { color: var(--accent-green); }
-.dt-ans.no  { color: var(--accent-red); }
-
-.dt-question-box { text-align: center; padding: 24px 0; }
-.dt-q-number { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; }
-.dt-q-text { font-size: 1.3rem; font-weight: 700; margin-bottom: 24px; }
-.dt-buttons { display: flex; gap: 16px; justify-content: center; }
-.dt-buttons .btn { min-width: 120px; justify-content: center; font-size: 1rem; }
-
-.dt-result {
-  text-align: center;
-  padding: 24px;
-  border-radius: var(--radius-lg);
-  margin-top: 16px;
+/* Game runner header */
+.game-run-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
 }
 
-.dt-result.success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); }
-.dt-result.fail    { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); }
+.game-run-title {
+  flex: 1;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
 
-.dt-animal-name { font-size: 2rem; margin-bottom: 12px; }
-.dt-result-msg  { font-size: 1rem; color: var(--text-secondary); margin-bottom: 20px; }
+.game-score-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.25);
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--accent-emerald);
+  font-family: var(--font-mono);
+}
 
-.game-concept-card { padding: 24px; margin-top: 20px; }
-.game-concept-card h3 { font-size: 1rem; margin-bottom: 12px; }
-.game-concept-card p  { color: var(--text-secondary); font-size: 0.875rem; line-height: 1.7; }
-.game-concept-card strong { color: var(--accent-secondary); }
-
-/* ===== NEURAL NETWORK GAME ===== */
-.nn-layout {
+/* ── DECISION TREE ── */
+.dt-layout {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr 280px;
   gap: 20px;
   align-items: start;
 }
 
-.nn-canvas-card { padding: 24px; }
-.nn-canvas-card h3 { font-size: 1rem; margin-bottom: 16px; }
+.dt-animal-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
 
-.nn-canvas {
-  width: 100%;
-  max-width: 440px;
+.dt-animal-icon {
+  width: 52px; height: 52px;
   border-radius: var(--radius-md);
-  background: rgba(0,0,0,0.3);
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dt-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.dt-hint { font-size: 0.875rem; color: var(--text-secondary); }
+
+.dt-path {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 24px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
   border: 1px solid var(--border);
 }
 
-.nn-controls { padding: 24px; }
-.nn-controls h3 { font-size: 1rem; margin-bottom: 20px; }
-.nn-controls-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+.dt-path-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+}
 
-.nn-control-label {
+.dt-path-q { color: var(--text-secondary); }
+.dt-path-ans {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+.dt-path-ans.yes { color: var(--accent-emerald); }
+.dt-path-ans.no  { color: var(--accent-rose); }
+
+.dt-question { padding: 8px 0; }
+.dt-q-meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; }
+.dt-q-text { font-size: 1.125rem; font-weight: 600; color: var(--text-primary); margin-bottom: 24px; letter-spacing: -0.015em; }
+.dt-btn-row { display: flex; gap: 12px; }
+
+.dt-result {
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dt-result.success { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.25); }
+.dt-result.partial { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.25); }
+
+.dt-result-name { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); }
+.dt-result p { font-size: 0.875rem; color: var(--text-secondary); }
+
+.dt-info h4 { font-size: 0.9375rem; font-weight: 700; margin-bottom: 12px; }
+.dt-info p  { font-size: 0.85rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 16px; }
+.dt-info strong { color: var(--accent-secondary); }
+
+.dt-key-concepts { display: flex; flex-direction: column; gap: 8px; }
+.dt-concept { display: flex; align-items: center; gap: 8px; font-size: 0.8125rem; color: var(--text-secondary); }
+.dt-concept-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── NEURAL NET ── */
+.nn-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 20px;
+  align-items: start;
+}
+
+.nn-section-title { font-size: 0.875rem; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; }
+
+.nn-canvas {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(0,0,0,0.4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.nn-output-indicator {
+  margin-top: 14px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  border: 1px solid;
+  text-align: center;
+}
+.nn-output-indicator.class1 { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.3); color: var(--accent-emerald); }
+.nn-output-indicator.class0 { background: rgba(244,63,94,0.08);  border-color: rgba(244,63,94,0.3);  color: var(--accent-rose);    }
+
+.nn-controls-col { display: flex; flex-direction: column; gap: 14px; }
+
+.nn-sliders { display: flex; flex-direction: column; gap: 16px; }
+
+.nn-slider-row { }
+
+.nn-slider-label {
   display: flex;
   justify-content: space-between;
   font-size: 0.8rem;
   color: var(--text-secondary);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
-.nn-val { color: var(--accent-secondary); font-family: var(--font-mono); }
+.nn-slider-val { font-family: var(--font-mono); color: var(--accent-secondary); font-weight: 700; }
 
-.nn-slider {
+.nn-range {
   width: 100%;
   height: 4px;
   appearance: none;
-  background: var(--border);
+  background: var(--bg-elevated);
   border-radius: var(--radius-full);
-  outline: none;
   cursor: pointer;
   accent-color: var(--accent-primary);
 }
 
-.nn-math-box {
-  background: rgba(0,0,0,0.3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+.nn-formula-card h4 { margin-bottom: 14px; }
+.nn-formulas { display: flex; flex-direction: column; gap: 8px; background: var(--bg-elevated); border-radius: var(--radius-md); padding: 14px; border: 1px solid var(--border); }
+.nn-formula-row { display: flex; gap: 10px; align-items: center; font-family: var(--font-mono); font-size: 0.8rem; }
+.nn-f-label { color: var(--text-muted); min-width: 40px; }
+.nn-f-val   { color: var(--accent-secondary); }
 
-.nn-formula {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--accent-secondary);
-}
+/* ── CLASSIFY ── */
+.cls-layout { max-width: 600px; margin: 0 auto; }
+.cls-main { display: flex; flex-direction: column; gap: 24px; }
+.cls-prompt { font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); }
 
-/* ===== CLASSIFY GAME ===== */
-.classify-game { padding: 32px; max-width: 600px; margin: 0 auto; }
-.classify-q { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; text-align: center; }
+.cls-features { display: flex; gap: 12px; flex-wrap: wrap; }
 
-.feature-display {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: 28px;
-}
-
-.feature-chip {
+.cls-feature-chip {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
   padding: 14px 20px;
-  background: var(--bg-glass);
+  background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   min-width: 90px;
 }
 
-.feature-key { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
-.feature-val { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
+.cls-feat-key  { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+.cls-feat-val  { font-size: 0.9375rem; font-weight: 700; color: var(--text-primary); }
 
-.classify-options {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
+.cls-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.cls-opt     { justify-content: center; }
 
-.classify-btn { justify-content: center; font-size: 0.875rem; }
-
-.classify-feedback {
-  text-align: center;
-  padding: 24px;
-  border-radius: var(--radius-lg);
+.cls-feedback {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
   align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid;
+  flex-wrap: wrap;
 }
 
-.classify-feedback.correct { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); }
-.classify-feedback.wrong   { background: rgba(239,68,68,0.08);  border: 1px solid rgba(239,68,68,0.2); }
+.cls-feedback.correct { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.3); }
+.cls-feedback.wrong   { background: rgba(244,63,94,0.08);  border-color: rgba(244,63,94,0.3);  }
 
-.classify-reveal    { font-size: 2.5rem; }
-.classify-result-msg { font-size: 1.1rem; font-weight: 600; }
+.cls-feedback.correct .cls-fb-icon { color: var(--accent-emerald); }
+.cls-feedback.wrong   .cls-fb-icon { color: var(--accent-rose); }
 
-@media (max-width: 768px) {
-  .games-grid { grid-template-columns: 1fr; }
-  .nn-layout  { grid-template-columns: 1fr; }
-  .classify-options { grid-template-columns: repeat(2, 1fr); }
+.cls-fb-text { flex: 1; }
+.cls-fb-title { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+.cls-fb-detail { font-size: 0.875rem; color: var(--text-secondary); margin-top: 2px; }
+.cls-fb-detail strong { color: var(--accent-secondary); }
+
+@media (max-width: 900px) {
+  .games-grid   { grid-template-columns: 1fr; }
+  .dt-layout    { grid-template-columns: 1fr; }
+  .nn-layout    { grid-template-columns: 1fr; }
+  .cls-options  { grid-template-columns: repeat(2, 1fr); }
 }

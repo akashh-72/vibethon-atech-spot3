@@ -1,103 +1,99 @@
 import { useState } from "react";
+import { Mail, Sliders, AlertCircle, CheckCircle, FlaskConical } from "lucide-react";
 import "./Simulations.css";
 
-// ===== SPAM DETECTION SIMULATION =====
-const SPAM_DATASET = [
+/* ── Spam Detection ── */
+const SPAM_KEYWORDS = ["free", "win", "winner", "click here", "limited offer", "congratulations", "prize", "claim now", "urgent", "cash"];
+const SAMPLE_EMAILS = [
   { text: "Congratulations! You've won a FREE iPhone. Click here to claim your prize now!", label: "SPAM" },
-  { text: "Hey, are we still on for the meeting tomorrow at 3pm?", label: "NOT SPAM" },
-  { text: "URGENT: Your account has been compromised. Verify immediately to avoid suspension!", label: "SPAM" },
-  { text: "Please find attached the quarterly report for your review.", label: "NOT SPAM" },
-  { text: "Limited time offer! Get 90% discount on all products. Buy now before it's too late!", label: "SPAM" },
-  { text: "Hi, I wanted to follow up on our conversation from last week about the project timeline.", label: "NOT SPAM" },
-  { text: "You are selected as a lucky winner! Send your bank details to claim $10,000 cash prize!", label: "SPAM" },
-  { text: "The team lunch is scheduled for Friday. Please confirm your attendance.", label: "NOT SPAM" },
+  { text: "Hey, are we still on for the meeting tomorrow at 3pm?",                         label: "NOT SPAM" },
+  { text: "URGENT: Your account compromised. Verify immediately to avoid suspension!",     label: "SPAM" },
+  { text: "Please find the attached quarterly report for your review.",                    label: "NOT SPAM" },
+  { text: "Limited time offer! 90% discount on all products. Buy now — claim now!",        label: "SPAM" },
+  { text: "Hi, following up on our conversation from last week about the timeline.",       label: "NOT SPAM" },
 ];
 
-const SPAM_KEYWORDS = ["free", "win", "winner", "click", "prize", "urgent", "offer", "discount", "buy now", "claim", "congratulations", "cash", "selected", "lucky"];
+const analyzeSpam = (text) => {
+  const lower = text.toLowerCase();
+  const found = SPAM_KEYWORDS.filter(kw => lower.includes(kw));
+  const score = found.length / SPAM_KEYWORDS.length;
+  return { label: score > 0.12 ? "SPAM" : "NOT SPAM", score: Math.min(score * 100 / 0.3, 100).toFixed(1), keywords: found };
+};
 
-// ===== CLASSIFICATION SIMULATION =====
-const IRIS_DATA = [
-  { sepalLength: 5.1, sepalWidth: 3.5, petalLength: 1.4, petalWidth: 0.2, species: "Setosa" },
-  { sepalLength: 4.9, sepalWidth: 3.0, petalLength: 1.4, petalWidth: 0.2, species: "Setosa" },
-  { sepalLength: 7.0, sepalWidth: 3.2, petalLength: 4.7, petalWidth: 1.4, species: "Versicolor" },
-  { sepalLength: 6.4, sepalWidth: 3.2, petalLength: 4.5, petalWidth: 1.5, species: "Versicolor" },
-  { sepalLength: 6.3, sepalWidth: 3.3, petalLength: 6.0, petalWidth: 2.5, species: "Virginica" },
-  { sepalLength: 5.8, sepalWidth: 2.7, petalLength: 5.1, petalWidth: 1.9, species: "Virginica" },
+/* ── Iris Classification ── */
+const IRIS_SAMPLES = [
+  { sl: 5.1, sw: 3.5, pl: 1.4, pw: 0.2, species: "Setosa"     },
+  { sl: 4.9, sw: 3.0, pl: 1.4, pw: 0.2, species: "Setosa"     },
+  { sl: 7.0, sw: 3.2, pl: 4.7, pw: 1.4, species: "Versicolor" },
+  { sl: 6.4, sw: 3.2, pl: 4.5, pw: 1.5, species: "Versicolor" },
+  { sl: 6.3, sw: 3.3, pl: 6.0, pw: 2.5, species: "Virginica"  },
+  { sl: 5.8, sw: 2.7, pl: 5.1, pw: 1.9, species: "Virginica"  },
 ];
-
-function classifyIris(pl, pw) {
+const SPECIES_COLOR = { Setosa: "#10b981", Versicolor: "#f59e0b", Virginica: "#8b5cf6" };
+const classifyIris = (pl, pw) => {
   if (pl < 2.5) return "Setosa";
   if (pl < 5.0 && pw < 1.8) return "Versicolor";
   return "Virginica";
-}
-
-const SPECIES_COLORS = { Setosa: "#10b981", Versicolor: "#f59e0b", Virginica: "#a78bfa" };
+};
 
 export default function Simulations() {
-  const [activeTab, setActiveTab] = useState("spam");
+  const [tab, setTab] = useState("spam");
 
   return (
-    <div className="simulations-page animate-fade-in">
+    <div className="page-wrapper animate-fade-in">
       <div className="page-header">
-        <h1 className="page-title">🔬 Real-World Simulations</h1>
-        <p className="page-subtitle">Run actual AIML use-cases on real data</p>
+        <div className="page-header-row">
+          <div>
+            <h1 className="page-title">Real-World Simulations</h1>
+            <p className="page-subtitle">Run actual ML use-cases on real datasets with interactive controls</p>
+          </div>
+          <div className="filter-tabs">
+            <button className={`filter-tab ${tab === "spam" ? "active" : ""}`} onClick={() => setTab("spam")}>
+              <Mail size={13} /> Spam Detection
+            </button>
+            <button className={`filter-tab ${tab === "iris" ? "active" : ""}`} onClick={() => setTab("iris")}>
+              <FlaskConical size={13} /> Iris Classification
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div className="sim-tabs">
-        <button className={`sim-tab ${activeTab === "spam" ? "active" : ""}`} onClick={() => setActiveTab("spam")}>
-          📧 Spam Detection
-        </button>
-        <button className={`sim-tab ${activeTab === "iris" ? "active" : ""}`} onClick={() => setActiveTab("iris")}>
-          🌸 Iris Classification
-        </button>
-      </div>
-
-      {activeTab === "spam" ? <SpamDetection /> : <IrisClassification />}
+      {tab === "spam" ? <SpamSim /> : <IrisSim />}
     </div>
   );
 }
 
-function SpamDetection() {
-  const [customText, setCustomText] = useState("");
-  const [customResult, setCustomResult] = useState(null);
-
-  const analyzeSpam = (text) => {
-    const lower = text.toLowerCase();
-    const found = SPAM_KEYWORDS.filter(kw => lower.includes(kw));
-    const score = found.length / SPAM_KEYWORDS.length;
-    return {
-      label: score > 0.12 ? "SPAM" : "NOT SPAM",
-      score: Math.min(score * 100 / 0.3, 100).toFixed(1),
-      keywords: found,
-    };
-  };
-
-  const handleCustom = () => {
-    if (!customText.trim()) return;
-    setCustomResult(analyzeSpam(customText));
-  };
+function SpamSim() {
+  const [custom, setCustom] = useState("");
+  const [result, setResult] = useState(null);
 
   return (
-    <div className="spam-sim">
-      <div className="sim-info glass-card">
-        <h3>📨 How It Works</h3>
-        <p>This simulation uses a <strong>keyword-based Naive Bayes-inspired</strong> approach. It calculates a spam score based on the presence of known spam keywords in the email text — a simple but effective baseline for spam detection.</p>
+    <div className="sim-layout">
+      {/* Info */}
+      <div className="card sim-info">
+        <div className="sim-info-header">
+          <div className="sim-info-icon"><Mail size={18} /></div>
+          <div>
+            <h3>Keyword-Based Spam Detection</h3>
+            <p>Uses a Naive Bayes-inspired approach — calculates a spam score based on the presence of known spam keywords. A foundational technique in NLP classification.</p>
+          </div>
+        </div>
       </div>
 
-      {/* Dataset Examples */}
-      <div className="sim-section glass-card">
-        <h3>Dataset Examples</h3>
-        <p className="sim-desc">Below is a sample of labeled emails. The classifier detects spam keywords to make predictions.</p>
-        <div className="spam-examples">
-          {SPAM_DATA_SET.map((item, i) => {
-            const result = analyzeSpam(item.text);
-            const isCorrect = result.label === item.label;
+      {/* Dataset table */}
+      <div className="card">
+        <h4 className="sim-section-title">Sample Dataset — Model Predictions</h4>
+        <div className="spam-table">
+          {SAMPLE_EMAILS.map((e, i) => {
+            const pred = analyzeSpam(e.text);
+            const correct = pred.label === e.label;
             return (
-              <div key={i} className={`spam-row ${item.label === "SPAM" ? "spam" : "ham"}`}>
-                <div className="spam-label-badge">{item.label}</div>
-                <div className="spam-text">{item.text}</div>
-                <div className={`spam-predict ${isCorrect ? "correct" : "wrong"}`}>
-                  Predicted: {result.label} {isCorrect ? "✅" : "❌"}
+              <div key={i} className={`spam-row ${e.label === "SPAM" ? "spam" : "ham"}`}>
+                <div className={`spam-truth-badge ${e.label === "SPAM" ? "spam" : "ham"}`}>{e.label}</div>
+                <p className="spam-text">{e.text}</p>
+                <div className={`spam-pred ${correct ? "correct" : "wrong"}`}>
+                  {correct ? <CheckCircle size={13} /> : <AlertCircle size={13} />}
+                  {pred.label}
                 </div>
               </div>
             );
@@ -105,27 +101,30 @@ function SpamDetection() {
         </div>
       </div>
 
-      {/* Try Your Own */}
-      <div className="sim-section glass-card">
-        <h3>🧪 Try Your Own Email</h3>
-        <textarea
-          className="form-input spam-textarea"
-          placeholder="Type an email text to classify..."
-          value={customText}
-          onChange={e => setCustomText(e.target.value)}
-          rows={4}
-        />
-        <button className="btn btn-primary" onClick={handleCustom}>Classify Email →</button>
+      {/* Try your own */}
+      <div className="card">
+        <h4 className="sim-section-title">Try Your Own Email</h4>
+        <div className="form-group" style={{ marginBottom: 14 }}>
+          <textarea
+            className="form-input sim-textarea"
+            rows={4}
+            placeholder="Paste an email message to classify..."
+            value={custom}
+            onChange={e => { setCustom(e.target.value); setResult(null); }}
+          />
+        </div>
+        <button className="btn btn-primary btn-sm" onClick={() => { if (custom.trim()) setResult(analyzeSpam(custom)); }}>
+          Classify Email
+        </button>
 
-        {customResult && (
-          <div className={`custom-result ${customResult.label === "SPAM" ? "spam-result" : "ham-result"}`}>
-            <div className="custom-result-label">{customResult.label === "SPAM" ? "🚨" : "✅"} {customResult.label}</div>
-            <div className="custom-result-score">Spam Score: {customResult.score}%</div>
-            {customResult.keywords.length > 0 && (
-              <div className="custom-keywords">
-                Keywords found: {customResult.keywords.map(k => (
-                  <span key={k} className="kw-chip">{k}</span>
-                ))}
+        {result && (
+          <div className={`custom-result ${result.label === "SPAM" ? "spam" : "ham"} animate-slide-down`}>
+            <div className="cr-label">{result.label}</div>
+            <div className="cr-score">Spam Score: {result.score}%</div>
+            {result.keywords.length > 0 && (
+              <div className="cr-keywords">
+                Keywords detected:
+                {result.keywords.map(k => <span key={k} className="kw-chip">{k}</span>)}
               </div>
             )}
           </div>
@@ -135,78 +134,69 @@ function SpamDetection() {
   );
 }
 
-// Fix variable name
-const SPAM_DATA_SET = SPAM_DATASET;
-
-function IrisClassification() {
-  const [petalLength, setPetalLength] = useState(3.5);
-  const [petalWidth, setPetalWidth]   = useState(1.2);
-  const prediction = classifyIris(petalLength, petalWidth);
+function IrisSim() {
+  const [pl, setPl] = useState(3.5);
+  const [pw, setPw] = useState(1.2);
+  const pred = classifyIris(pl, pw);
 
   return (
-    <div className="iris-sim">
-      <div className="sim-info glass-card">
-        <h3>🌸 Iris Flower Classification</h3>
-        <p>The Iris dataset is one of the most famous ML datasets. This simulation uses a simplified <strong>Decision Tree</strong> rule to classify Iris flowers into 3 species based on petal measurements.</p>
+    <div className="sim-layout">
+      <div className="card sim-info">
+        <div className="sim-info-header">
+          <div className="sim-info-icon"><FlaskConical size={18} /></div>
+          <div>
+            <h3>Iris Flower Classification</h3>
+            <p>One of ML's most famous datasets. Uses a simplified Decision Tree rule to classify flowers into 3 species based on petal measurements — a core supervised learning example.</p>
+          </div>
+        </div>
       </div>
 
-      <div className="iris-layout">
-        <div className="sim-section glass-card">
-          <h3>Tune Petal Measurements</h3>
-          <div className="iris-controls">
-            <div className="iris-control">
-              <div className="iris-control-label">
-                <span>Petal Length (cm)</span>
-                <span className="iris-val">{petalLength.toFixed(1)} cm</span>
+      <div className="iris-main-grid">
+        {/* Controls */}
+        <div className="card">
+          <h4 className="sim-section-title">Adjust Petal Measurements</h4>
+          <div className="iris-sliders">
+            {[
+              { label: "Petal Length", val: pl, set: setPl, min: 1, max: 7, unit: "cm" },
+              { label: "Petal Width",  val: pw, set: setPw, min: 0.1, max: 2.5, unit: "cm" },
+            ].map(s => (
+              <div key={s.label} className="iris-slider-row">
+                <div className="iris-slider-label">
+                  <span>{s.label}</span>
+                  <span className="iris-slider-val">{s.val.toFixed(1)} {s.unit}</span>
+                </div>
+                <input type="range" min={s.min} max={s.max} step={0.1} value={s.val}
+                  onChange={e => s.set(parseFloat(e.target.value))} className="nn-range" />
               </div>
-              <input type="range" min={1} max={7} step={0.1} value={petalLength} onChange={e => setPetalLength(parseFloat(e.target.value))} className="nn-slider" />
-            </div>
-            <div className="iris-control">
-              <div className="iris-control-label">
-                <span>Petal Width (cm)</span>
-                <span className="iris-val">{petalWidth.toFixed(1)} cm</span>
-              </div>
-              <input type="range" min={0.1} max={2.5} step={0.1} value={petalWidth} onChange={e => setPetalWidth(parseFloat(e.target.value))} className="nn-slider" />
-            </div>
+            ))}
           </div>
 
-          <div className="iris-prediction" style={{ borderColor: SPECIES_COLORS[prediction] + "66", background: SPECIES_COLORS[prediction] + "18" }}>
+          <div className="iris-prediction" style={{ borderColor: SPECIES_COLOR[pred] + "55", background: SPECIES_COLOR[pred] + "10" }}>
             <div className="iris-pred-label">Predicted Species</div>
-            <div className="iris-pred-value" style={{ color: SPECIES_COLORS[prediction] }}>
-              🌸 Iris {prediction}
-            </div>
+            <div className="iris-pred-value" style={{ color: SPECIES_COLOR[pred] }}>Iris {pred}</div>
             <div className="iris-pred-rule">
-              {prediction === "Setosa" ? "Rule: Petal Length < 2.5 cm" :
-               prediction === "Versicolor" ? "Rule: Petal Length 2.5–5.0 cm & Width < 1.8 cm" :
-               "Rule: Petal Length ≥ 5.0 cm or Width ≥ 1.8 cm"}
+              {pred === "Setosa"     ? "Petal Length < 2.5 cm" :
+               pred === "Versicolor" ? "Petal Length 2.5–5.0 cm & Width < 1.8 cm" :
+               "Petal Length >= 5.0 cm or Width >= 1.8 cm"}
             </div>
           </div>
         </div>
 
         {/* Dataset table */}
-        <div className="sim-section glass-card">
-          <h3>Sample Dataset</h3>
-          <div className="iris-table-wrapper">
+        <div className="card">
+          <h4 className="sim-section-title">Sample Dataset</h4>
+          <div className="iris-table-wrap">
             <table className="iris-table">
               <thead>
                 <tr>
-                  <th>Sepal L</th>
-                  <th>Sepal W</th>
-                  <th>Petal L</th>
-                  <th>Petal W</th>
-                  <th>Species</th>
+                  <th>Sepal L</th><th>Sepal W</th><th>Petal L</th><th>Petal W</th><th>Species</th>
                 </tr>
               </thead>
               <tbody>
-                {IRIS_DATA.map((row, i) => (
+                {IRIS_SAMPLES.map((r, i) => (
                   <tr key={i}>
-                    <td>{row.sepalLength}</td>
-                    <td>{row.sepalWidth}</td>
-                    <td>{row.petalLength}</td>
-                    <td>{row.petalWidth}</td>
-                    <td style={{ color: SPECIES_COLORS[row.species], fontWeight: 700 }}>
-                      {row.species}
-                    </td>
+                    <td>{r.sl}</td><td>{r.sw}</td><td>{r.pl}</td><td>{r.pw}</td>
+                    <td style={{ color: SPECIES_COLOR[r.species], fontWeight: 700, fontFamily: "var(--font-mono)", fontSize: "0.8rem" }}>{r.species}</td>
                   </tr>
                 ))}
               </tbody>
